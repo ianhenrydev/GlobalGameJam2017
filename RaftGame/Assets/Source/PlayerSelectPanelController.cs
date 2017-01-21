@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using RaftGame;
 using System;
 
 public class PlayerSelectPanelController : MonoBehaviour {
@@ -10,6 +11,8 @@ public class PlayerSelectPanelController : MonoBehaviour {
 	public GameObject promptText;
 	public Text teamText;
 	public int playerNum;
+
+	// private string SubmitButton;
 
 	private bool playerJoined = false;
 	private Player player;
@@ -22,7 +25,8 @@ public class PlayerSelectPanelController : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-		if (Input.GetButtonDown("Submit" + playerNum.ToString())) {
+		string JoinButton = "Submit" + playerNum.ToString ();
+		if (Input.GetButtonDown(JoinButton)) {
 			if (!playerJoined) {
 				promptText.SetActive (false);
 				joinedLayout.SetActive (true);
