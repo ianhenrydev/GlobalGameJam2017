@@ -41,7 +41,6 @@ Shader "RaftGameShaders/WaterShader" {
 		#define UNITY_PASS_FORWARDBASE
 		#include "UnityCG.cginc"
 		#pragma multi_compile_fwdbase
-		#pragma exclude_renderers metal d3d11_9x xbox360 xboxone ps3 ps4 psp2 
 		#pragma target 3.0
 
 		uniform half _OpacityOut;
@@ -67,6 +66,8 @@ Shader "RaftGameShaders/WaterShader" {
 		uniform fixed _OpacityIn;
 		uniform fixed _Append;
 
+		uniform vector arrayName[2];
+
 	struct VertexInput
 	{
 		float4 vertex : POSITION;
@@ -84,10 +85,16 @@ Shader "RaftGameShaders/WaterShader" {
 	{
 		VertexOutput o = (VertexOutput)0;
 		o.uv0 = v.texcoord0;
+
 		float4 objPos = mul(unity_ObjectToWorld, float4(0,0,0,1));
+
+
 		o.pos = mul(UNITY_MATRIX_MVP, v.vertex);
+
 		o.projPos = ComputeScreenPos(o.pos);
+
 		COMPUTE_EYEDEPTH(o.projPos.z);
+
 		return o;
 	}
 
