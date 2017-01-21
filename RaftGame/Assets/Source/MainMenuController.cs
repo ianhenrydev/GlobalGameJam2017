@@ -22,7 +22,7 @@ namespace RaftGame {
 				int team2count = 0;
 
 				if (RaftGame.GameManager.players.Count > 0) {
-					SceneManager.LoadScene ("ShootMode");
+					SceneManager.LoadScene ("Arena");
 					return;
 				} else {
 					return;
