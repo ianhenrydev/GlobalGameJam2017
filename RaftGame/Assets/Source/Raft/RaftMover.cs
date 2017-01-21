@@ -1,9 +1,8 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Events;
 
-public class RaftGameInterfaces : MonoBehaviour {
+public class RaftMover : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
@@ -14,9 +13,4 @@ public class RaftGameInterfaces : MonoBehaviour {
 	void Update () {
 		
 	}
-}
-
-[Serializable]
-public class GameStartEvent : UnityEvent<string> {
-
 }
