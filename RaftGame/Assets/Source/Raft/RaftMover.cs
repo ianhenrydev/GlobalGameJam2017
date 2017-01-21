@@ -2,15 +2,36 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class RaftMover : MonoBehaviour {
+[RequireComponent(typeof(Rigidbody))]
+public class RaftMover : MonoBehaviour
+{
+    #region Private Members
+    private RaftInput InputComponent;
+    private Rigidbody RigidBodyComponent;
+    #endregion
 
-	// Use this for initialization
-	void Start () {
-		
-	}
-	
-	// Update is called once per frame
-	void Update () {
-		
-	}
+    #region Public Members
+    public float MovePower = 5.0f;
+    #endregion
+
+    public void Awake()
+    {
+        InputComponent = GetComponent<RaftInput>();
+        RigidBodyComponent = GetComponent<Rigidbody>();
+    }
+
+    private void Update()
+    {
+        if (RigidBodyComponent != null
+            && InputComponent != null)
+        {
+            //Rotate raft to input vector direction
+            Debug.Log(InputComponent.InputVector);
+        }
+    }
+
+    private void FixedUpdate()
+    {
+        
+    }
 }
