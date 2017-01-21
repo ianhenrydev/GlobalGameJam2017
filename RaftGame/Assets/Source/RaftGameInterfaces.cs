@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 
 public class RaftGameInterfaces : MonoBehaviour {
 
@@ -13,4 +14,8 @@ public class RaftGameInterfaces : MonoBehaviour {
 	void Update () {
 		
 	}
+}
+	
+public class GameStartEvent : UnityEvent<string> {
+
 }
