@@ -65,7 +65,7 @@ public class RaftInput : MonoBehaviour
 
     public void Awake()
     {
-		SetOwner (0);
+		SetOwner (-1);
     }
 
     public void Update()
@@ -75,6 +75,10 @@ public class RaftInput : MonoBehaviour
 
     public void SetOwner(int newId)
     {
+		if (newId < 1) {
+			newId = -1;
+		}
+
 		FireButton = "Fire" + newId;
 		ThrustAxis = "Thrust" + newId;
 		BoostButton = "Boost" + newId;

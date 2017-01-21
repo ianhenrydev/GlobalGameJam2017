@@ -55,11 +55,12 @@ public class RaftMover : MonoBehaviour
             HandleBoost();
         }
 
-		print (InputComponent.InputThrust);
+		// print (InputComponent.InputThrust);
     }
 		
     private void Thrust(float amount)
     {
+		print ("Thrusting by " + amount);
 		// Thrust the raft by its movement speed (this is velocity?)
 		// acceleration = v * dt
 		// Force = mass * acceleration
@@ -68,6 +69,8 @@ public class RaftMover : MonoBehaviour
 
     private void Rotate(float amount)
     {
+		print ("Rotating by " + amount);
+
 		// Rotation angle = rotational velocity * dt
         transform.Rotate(transform.up, amount * TurnSpeed * Time.deltaTime);
     }

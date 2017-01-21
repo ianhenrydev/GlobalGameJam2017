@@ -6,42 +6,48 @@ namespace RaftGame {
 	
 	public class RaftShooting : MonoBehaviour {
 
+		// Sibling Scripts
 		private RaftInput InputComponent;
+		private Rigidbody RigidbodyComponent;
 
-		public int PlayerNumber = 1;
+		// Wave Prefab to shoot
 		public Rigidbody Wave;		// Wave Prefab class
-		public Transform FireTransform;		// Child of Raft
+		private Transform FireTransform;		// Child of Raft
 
 		/**
 		 *	Gameplay properties 
 		 */
-		// Constants
-		public float MinLaunchForce = 1.0f;
-		public float MaxLaunchForce = 15.0f;
-		public float MaxChargeTime = 0.75f;
+		#region Public Members
+		public float MinLaunchForce = 1.0f;			// Minimum launching force. Often the start value
+		public float MaxLaunchForce = 15.0f;		// Maximum launching force. If reached, fires the wave
 
-		public float MaxWaveLifetime = 4.0f;
+		public float ChargeTime = 0.75f;			// Duration to (fully?) charge up a shot
+
+		public float MaxWaveLifetime = 4.0f;		// TODO: Playtest different values. Do charged up shots live longer?
 		public float MinWaveLifetime = 1.0f;
+		#endregion
 
-		public float CurrentLaunchForce;
-		public float ChargeSpeed;
+		#region Private Members
+		private float CurrentLaunchForce;			
+		private float ChargeSpeed;
 
-		private string FireButton;			// Input axis for launching waves
-		private bool isFired;
+		private bool isFired;						// State management
+			
+		private float WaveLifetime;				
+		#endregion
 
-		private float WaveLifetime;
+		void Awake() {
+			InputComponent = GetComponent<RaftInput> ();
+			RigidbodyComponent = GetComponent<Rigidbody> ();
+		}
 
 		private void OnEnable() {
 			CurrentLaunchForce = MinLaunchForce;
 		}
 
-		void Awake() {
-			InputComponent = GetComponent<RaftInput> ();
-		}
-
 		// Use this for initialization
 		void Start () {
-			ChargeSpeed = (MaxLaunchForce - MinLaunchForce) / MaxChargeTime;
+			ChargeSpeed = (MaxLaunchForce - MinLaunchForce) / ChargeTime;
 		}
 
 		// Update is called once per frame
@@ -70,11 +76,15 @@ namespace RaftGame {
 		 * Activate Fired state. Spawn new wave instance, set velocities, and play sound
 		 */
 		private void Fire() {
+			print ("Firing weapon!");
+
 			isFired = true;
 
 			// Create an instance of the shell and store a reference to it's rigidbody.
 			Rigidbody waveInstance =
-				Instantiate (Wave, FireTransform.position, FireTransform.rotation) as Rigidbody;
+				// QUESTION: Where is transform getting set
+				// Instantiate (Wave, FireTransform.position, FireTransform.rotation) as Rigidbody;
+				Instantiate(Wave, transform.position, transform.rotation) as Rigidbody;
 
 			// Set the shell's velocity to the launch force in the fire position's forward direction.
 			waveInstance.velocity = CurrentLaunchForce * FireTransform.forward; ;
