@@ -5,34 +5,99 @@ using UnityEngine;
 
 namespace RaftGame {
 		
+	public struct Player {
+		private int idVal, teamVal;
+		private Color _color;
+
+		public Color color {
+			get {
+				return _color;
+			}
+			set {
+				_color = value;
+			}
+		}
+
+		public int id {
+			get {
+				return idVal;
+			}
+			set {
+				idVal = value;
+			}
+		}
+		public int team {
+			get {
+				return teamVal;
+			}
+			set {
+				teamVal = value;
+			}
+		}
+	}
+
 	public class GameManager : MonoBehaviour  {
 
-		public GameObject m_RaftPrefab;
-		public RaftManager[] m_Rafts;
-		public static List<Player> players = new List<Player>();
+		public GameObject m_RaftPrefab;				// Prefab of raft to spawn for players
+		public GameObject m_BallPrefab;				// Prefab of game ball
 
-		private int m_PlayerCount; 
+		public float RoundStartDelay = 3.0f;		// Round start and end delays to show ui
+		public float RoundEndDelay = 3.0f;
+
+		// Global List of Player Initialization data
+		// Modified by main menu controller
+		[HideInInspector] public static List<Player> players = new List<Player>();
+
+		private List<RaftManager> m_Rafts;			// Raft manager for each player
+		private GameObject m_BallInstance;			// Instance of round ball
+
+		private WaitForSeconds StartWait;			// Timers for delaying coroutines
+		private WaitForSeconds EndWait;
 
 		void Awake() {
-			print ("Initializing Game Manager");
-			// players = new List<Player>();
-			// TODO: This should be set by MainMenu after player lobby finishes
-			PlayerPrefs.SetInt ("Player Count", 2);
-			PlayerPrefs.SetString ("Player1.Color", Color.red.ToString ());
+			m_Rafts = new List<RaftManager> ();
 		}
 
 		// Use this for initialization
 		void Start () {
-			print ("Starting Game Manager");
-			m_PlayerCount = PlayerPrefs.GetInt ("Player Count");
-			print ("Number of players: " + m_PlayerCount);
+			SpawnRafts ();
 
-			SpawnRafts (m_PlayerCount);
+			StartWait = new WaitForSeconds (RoundStartDelay);
+			EndWait = new WaitForSeconds (RoundEndDelay);
+
+			StartCoroutine (GameLoop ());
 		}
 		
 		// Update is called once per frame
 		void Update () {
 			
+		}
+
+		private IEnumerator GameLoop() {
+			yield return StartCoroutine (RoundStarting ());
+
+			yield return StartCoroutine (RoundPlaying ());
+
+			yield return StartCoroutine (RoundEnding ());
+		}
+
+		private IEnumerator RoundStarting() {
+			print ("Round starting");
+
+			yield return StartWait;
+		}
+
+		private IEnumerator RoundPlaying() {
+			print ("round playing");
+
+			SpawnBall ();
+
+			// Move onto next frame
+			yield return null;
+		}
+
+		private IEnumerator RoundEnding() {
+			yield return EndWait;
 		}
 
 		void ResetRafts() {
@@ -41,39 +106,29 @@ namespace RaftGame {
 			}	
 		}
 
-		void SpawnRafts(int player_count) {		
-			m_Rafts = new RaftManager[player_count];
+		private void SpawnBall() {
+			Debug.Log ("Spawning ball");
 
-			for (int i = 0; i < m_Rafts.Length; ++i) {
-				m_Rafts[i] = new RaftManager ();
+			GameObject ball_spawn = GameObject.FindGameObjectWithTag ("Ball Spawn");
+			if (ball_spawn) {
+				m_BallInstance = Instantiate(m_BallPrefab, ball_spawn.transform);
+			}
+		}
 
-				string player_color_key = "Player" + i + ".Color";
+		void SpawnRafts() {		
+			Debug.Log ("Spawning rafts");
+			var player_spawns = new Stack<GameObject>(GameObject.FindGameObjectsWithTag ("Player Spawn"));
 
-				if (PlayerPrefs.HasKey(player_color_key)) {
-					string player_color = PlayerPrefs.GetString(player_color_key); 
-					print(player_color_key + " found: " + player_color);
-				}
+			foreach (Player player in players) {
+				Debug.Log ("Spawning player " + player.id);
+				Transform spawn_transform = player_spawns.Pop ().transform;
+
+				RaftManager raft = new RaftManager();
+				raft.SetPlayer(player);
+				raft.m_Instance = Instantiate (m_RaftPrefab, spawn_transform);
+			
+				m_Rafts.Add (raft);
 			}
 		}
 	}
 } // end of namespace
-public struct Player {
-	int idVal;
-	int teamVal;
-	public int id {
-		get {
-			return idVal;
-		}
-		set {
-			idVal = value;
-		}
-	}
-	public int team {
-		get {
-			return teamVal;
-		}
-		set {
-			teamVal = value;
-		}
-	}
-}

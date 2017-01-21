@@ -4,24 +4,30 @@ using UnityEngine;
 
 namespace RaftGame {
 	
-	public class RaftManager : MonoBehaviour {
-		public Color m_PlayerColor;
+	public class RaftManager {
 		public Transform m_SpawnPoint;
 
+		[HideInInspector] public Color m_PlayerColor;
 		[HideInInspector] public int m_Id;
 		[HideInInspector] public int m_Wins;
+		[HideInInspector] public int m_Team;
 
 		private RaftShooting m_ShootingComponent;
 		private RaftMover m_MovementComponent;
-		private GameObject m_Instance;
+		[HideInInspector] public GameObject m_Instance;
 		// Canvasgameobject - used to disable world space ui
 
 		public void Setup() {
 
 		}
 
+		public void SetPlayer(Player data) {
+			m_Id = data.id;
+			m_Team = data.team;
+		}
+
 		public void Reset() {
-			print ("Resetting Raft " + m_Id);
+			Debug.Log ("Reset");
 		}
 	}
 
