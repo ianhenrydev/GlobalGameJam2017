@@ -12,10 +12,12 @@ public class PlayerSelectPanelController : MonoBehaviour {
 	public int playerNum;
 
 	private bool playerJoined = false;
-	private bool team1 = true;
+	private Player player;
 	// Use this for initialization
 	void Start () {
-		
+		player = new Player ();
+		player.id = playerNum;
+		player.team = 1;
 	}
 	
 	// Update is called once per frame
@@ -24,6 +26,7 @@ public class PlayerSelectPanelController : MonoBehaviour {
 			if (!playerJoined) {
 				promptText.SetActive (false);
 				joinedLayout.SetActive (true);
+				MainMenuController.activePlayers.Add (player);
 				playerJoined = !playerJoined;
 			}
 		}
@@ -31,6 +34,7 @@ public class PlayerSelectPanelController : MonoBehaviour {
 			if (playerJoined) {
 				promptText.SetActive (true);
 				joinedLayout.SetActive (false);
+				MainMenuController.activePlayers.Remove (player);
 				playerJoined = !playerJoined;
 			}
 		}
@@ -46,11 +50,13 @@ public class PlayerSelectPanelController : MonoBehaviour {
 	}
 
 	private void switchTeam() {
-		team1 = !team1;
-		if (team1) {
-			teamText.text = "Team 1";
+		MainMenuController.activePlayers.Remove (player);
+		if (player.team == 1) {
+			player.team = 2;
 		} else {
-			teamText.text = "Team 2";
+			player.team = 1;
 		}
+		teamText.text = "Team " + player.team.ToString ();
+		MainMenuController.activePlayers.Add (player);
 	}
 }
