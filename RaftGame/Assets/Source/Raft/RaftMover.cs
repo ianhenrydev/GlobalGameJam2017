@@ -36,7 +36,7 @@ public class RaftMover : MonoBehaviour
 
         MoveSpeed = Speed;
 
-
+        
     }
 
     private void Update()
