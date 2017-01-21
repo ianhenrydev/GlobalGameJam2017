@@ -9,7 +9,10 @@ namespace RaftGame.Wave
 {
     public class WorldWaveController : MonoBehaviour
     {
+		// Singleton?
         private static WorldWaveController Instance;
+
+		// All the waves currently in scene
         private List<Vector4> WorldWaves = new List<Vector4>();
         public MeshRenderer WorldWater;
 
