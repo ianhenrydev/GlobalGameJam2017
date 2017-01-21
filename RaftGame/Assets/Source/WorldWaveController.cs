@@ -23,6 +23,10 @@ namespace RaftGame.Wave
 
         private void Start()
         {
+            SpawnWave(new Vector4(-10, 0, 5, 0));
+            SpawnWave(new Vector4(-20, 0, 10, 0));
+            SpawnWave(new Vector4(-15, 0, 15, 0));
+            SpawnWave(new Vector4(-15, 0, 20, 0));
 
             StartCoroutine(TickWaves());
         }
@@ -31,18 +35,26 @@ namespace RaftGame.Wave
         {
             if (WorldWaves != null)
             {
-                while (WorldWaves.Count > 0)
+                while (true)
                 {
-                    for (int i = 0; i < WorldWaves.Count; i++)
+                    if (WorldWaves.Count <= 0)
                     {
-                        var angleDirection = Quaternion.AngleAxis(WorldWaves[i].z, Vector3.up).eulerAngles.normalized;
-                        WorldWaves[i] += new Vector4(angleDirection.x, angleDirection.y, 0, 0);
+                        yield return null;
+                        continue;
                     }
 
-                    //Sort waves by distance
-                    BubbleSortWaves();
+                    for (int i = 0; i < WorldWaves.Count; i++)
+                    {
+                        //var angleDirection = Quaternion.AngleAxis(WorldWaves[i].z, Vector3.up).eulerAngles.normalized;
+                        //WorldWaves[i] += new Vector4(angleDirection.x, angleDirection.y, 0, 0);
 
-                    WorldWater.sharedMaterial.SetVectorArray("WaveHotspots", WorldWaves.ToArray());
+                        WorldWaves[i] += new Vector4(0.1f, 0, 0, 0);
+                    }
+                    
+                    MaterialPropertyBlock newBlock = new MaterialPropertyBlock();
+                    newBlock.SetVectorArray(Shader.PropertyToID("_WaveHotSpots"), WorldWaves.ToArray());
+
+                    WorldWater.SetPropertyBlock(newBlock);
 
                     yield return null;
                 }
@@ -51,10 +63,11 @@ namespace RaftGame.Wave
             yield return null;
         }
 
-        public static void SpawnWave(Vector3 waveInfo)
+        public static void SpawnWave(Vector4 waveInfo)
         {
             if (Instance != null)
             {
+
                 Instance.WorldWaves.Add(waveInfo);
 
                 //Play spawn wave sound
@@ -69,7 +82,7 @@ namespace RaftGame.Wave
         private void BubbleSortWaves()
         {
             int swaps = 0;
-            for (int i = 0; i < WorldWaves.Count; i++)
+            for (int i = 0; i <= WorldWaves.Count - 2; i++)
             {
                 var sum = WorldWaves[i].x + WorldWaves[i].y;
                 var nextSum = WorldWaves[i + 1].x + WorldWaves[i + 1].y;

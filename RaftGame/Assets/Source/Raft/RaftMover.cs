@@ -42,12 +42,12 @@ public class RaftMover : MonoBehaviour
         if (RigidBodyComponent != null
             && InputComponent != null)
         {
-            if (InputComponent.InputThrust != 0)
+            if (InputComponent.InputThrust != 0.0f)
             {
                 Thrust(InputComponent.InputThrust);
             }
 
-            if (InputComponent.InputVector.x != 0)
+            if (InputComponent.InputVector.x != 0.0f)
             {
                 Rotate(InputComponent.InputVector.x);
             }

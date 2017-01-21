@@ -20,7 +20,6 @@ public class RaftInput : MonoBehaviour
             if (OwnerId == -1)
                 return Vector3.zero;
 
-			// 
             return new Vector3(
                 Input.GetAxis(SteerAxis),
                 0,
@@ -55,6 +54,7 @@ public class RaftInput : MonoBehaviour
 	public bool IsFiring {
 		get {
 			// This check is stupid
+            //it's scalable!
 			if (OwnerId == -1) {
 				return false;
 			}
@@ -65,17 +65,17 @@ public class RaftInput : MonoBehaviour
 
     public void Awake()
     {
-		SetOwner (-1);
+		SetOwner (0);
     }
 
     public void Update()
     {
-
     }
 
     public void SetOwner(int newId)
     {
-		if (newId < 1) {
+		if (newId < 0)
+        {
 			newId = -1;
 		}
 
