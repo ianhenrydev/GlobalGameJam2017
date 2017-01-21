@@ -66,6 +66,8 @@ Shader "RaftGameShaders/WaterShader" {
 		uniform fixed _OpacityIn;
 		uniform fixed _Append;
 
+		uniform vector arrayName[2];
+
 	struct VertexInput
 	{
 		float4 vertex : POSITION;
@@ -85,6 +87,7 @@ Shader "RaftGameShaders/WaterShader" {
 		o.uv0 = v.texcoord0;
 
 		float4 objPos = mul(unity_ObjectToWorld, float4(0,0,0,1));
+
 
 		o.pos = mul(UNITY_MATRIX_MVP, v.vertex);
 

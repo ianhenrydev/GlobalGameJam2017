@@ -11,7 +11,7 @@ namespace RaftGame.Wave
     {
         private static WorldWaveController Instance;
         private List<Vector4> WorldWaves = new List<Vector4>();
-        public Material WorldWater;
+        public MeshRenderer WorldWater;
 
         private void Awake()
         {
@@ -39,7 +39,7 @@ namespace RaftGame.Wave
                     //Sort waves by distance
                     BubbleSortWaves();
 
-                    //WorldWater.SetVectorArray("WaveHotspots", WorldWaves.ToArray());
+                    WorldWater.sharedMaterial.SetVectorArray("WaveHotspots", WorldWaves.ToArray());
 
                     yield return null;
                 }
