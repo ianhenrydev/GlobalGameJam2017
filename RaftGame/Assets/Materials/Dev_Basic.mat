@@ -1,0 +1,214 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!21 &2100000
+Material:
+  serializedVersion: 6
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_Name: Dev_Basic
+  m_Shader: {fileID: 4800000, guid: 3ab0514b268268f44afbf222ddca9fe5, type: 3}
+  m_ShaderKeywords: 
+  m_LightmapFlags: 5
+  m_CustomRenderQueue: -1
+  stringTagMap: {}
+  m_SavedProperties:
+    serializedVersion: 2
+    m_TexEnvs:
+    - first:
+        name: _Bump
+      second:
+        m_Texture: {fileID: 2800000, guid: 21b8f825b68d72d4f96b739ae85b30ae, type: 3}
+        m_Scale: {x: 5, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - first:
+        name: _BumpMap
+      second:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - first:
+        name: _BumpTexture
+      second:
+        m_Texture: {fileID: 2800000, guid: 21b8f825b68d72d4f96b739ae85b30ae, type: 3}
+        m_Scale: {x: 300000, y: 3000}
+        m_Offset: {x: 0, y: 0}
+    - first:
+        name: _DetailAlbedoMap
+      second:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - first:
+        name: _DetailMask
+      second:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - first:
+        name: _DetailNormalMap
+      second:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - first:
+        name: _EmissionMap
+      second:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 10, y: 10}
+        m_Offset: {x: 0, y: 0}
+    - first:
+        name: _Foam
+      second:
+        m_Texture: {fileID: 2800000, guid: a9578d9d9d3bff24e9728a8c361bd561, type: 3}
+        m_Scale: {x: 30, y: 30}
+        m_Offset: {x: 0, y: 0}
+    - first:
+        name: _FoamGradient
+      second:
+        m_Texture: {fileID: 2800000, guid: 4372f22e927126049b509d479231f4bd, type: 3}
+        m_Scale: {x: 10, y: 10}
+        m_Offset: {x: 0, y: 0}
+    - first:
+        name: _FoamTexture
+      second:
+        m_Texture: {fileID: 2800000, guid: a9578d9d9d3bff24e9728a8c361bd561, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - first:
+        name: _MainTex
+      second:
+        m_Texture: {fileID: 2800000, guid: 4b16effc99a683542b19629f38d72bd4, type: 3}
+        m_Scale: {x: 10, y: 10}
+        m_Offset: {x: 0, y: 0}
+    - first:
+        name: _MetallicGlossMap
+      second:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - first:
+        name: _OcclusionMap
+      second:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - first:
+        name: _ParallaxMap
+      second:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - first:
+        name: _SurfaceTexture
+      second:
+        m_Texture: {fileID: 2800000, guid: 60ccb5c1edfd21d459ce52b58204d048, type: 3}
+        m_Scale: {x: 3, y: 3}
+        m_Offset: {x: 0, y: 0}
+    - first:
+        name: _WaterNormal
+      second:
+        m_Texture: {fileID: 2800000, guid: 21b8f825b68d72d4f96b739ae85b30ae, type: 3}
+        m_Scale: {x: 1000, y: 1000}
+        m_Offset: {x: 0, y: 0}
+    m_Floats:
+    - first:
+        name: _Append
+      second: 84
+    - first:
+        name: _BumpPower
+      second: -0.01
+    - first:
+        name: _BumpScale
+      second: 1
+    - first:
+        name: _Cutoff
+      second: 0.5
+    - first:
+        name: _Depth
+      second: 1.3
+    - first:
+        name: _DepthColorPow
+      second: 0.45
+    - first:
+        name: _DepthDeepPower
+      second: 5.51
+    - first:
+        name: _DetailNormalMapScale
+      second: 1
+    - first:
+        name: _DstBlend
+      second: 0
+    - first:
+        name: _FoamDepthPower
+      second: 0.25
+    - first:
+        name: _FoamPower
+      second: 1.9
+    - first:
+        name: _FoamSaturationPower
+      second: 1
+    - first:
+        name: _FoamSpeed
+      second: 0.4
+    - first:
+        name: _FoamStrength
+      second: 0.95
+    - first:
+        name: _FoamTime
+      second: 0
+    - first:
+        name: _Glossiness
+      second: 0
+    - first:
+        name: _Metallic
+      second: 0
+    - first:
+        name: _Mode
+      second: 0
+    - first:
+        name: _OcclusionStrength
+      second: 1
+    - first:
+        name: _OpacityIn
+      second: 0
+    - first:
+        name: _OpacityOut
+      second: 0.353
+    - first:
+        name: _Parallax
+      second: 0.02
+    - first:
+        name: _SampleTime
+      second: 1
+    - first:
+        name: _ShorePower
+      second: 31.6
+    - first:
+        name: _SrcBlend
+      second: 1
+    - first:
+        name: _UVSec
+      second: 0
+    - first:
+        name: _WaterSpeed
+      second: 1
+    - first:
+        name: _WaveCount
+      second: 1
+    - first:
+        name: _ZWrite
+      second: 1
+    m_Colors:
+    - first:
+        name: _Color
+      second: {r: 1, g: 0, b: 0.5586209, a: 1}
+    - first:
+        name: _EmissionColor
+      second: {r: 0, g: 0, b: 0, a: 1}
+    - first:
+        name: _FoamColor
+      second: {r: 1, g: 1, b: 1, a: 1}
+    - first:
+        name: _WaterColor
+      second: {r: 0, g: 0.61906683, b: 0.8235294, a: 1}

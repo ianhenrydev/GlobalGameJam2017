@@ -1,4 +1,5 @@
 ﻿using System.Collections;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -6,16 +7,39 @@ public class RaftInput : MonoBehaviour
 {
     public int OwnerId { get; private set; }
 
-    public Vector2 InputVector
+    public Vector3 InputVector
     {
         get
         {
             if (OwnerId == -1)
-                return Vector2.zero;
+                return Vector3.zero;
 
-            return new Vector2(
-                Input.GetAxis("Horizontal" + OwnerId),
-                Input.GetAxis("Vertical" + OwnerId));
+            return new Vector3(
+                Input.GetAxis("Steer" + OwnerId.ToString()),
+                0,
+                -Input.GetAxis("Steer" + OwnerId.ToString()));
+        }
+    }
+
+    public float InputThrust
+    {
+        get
+        {
+            if (OwnerId == -1)
+                return 0;
+
+            return Mathf.Clamp01(-Input.GetAxis("Thrust" + OwnerId.ToString()));
+        }
+    }
+
+    public bool IsBoosting
+    {
+        get
+        {
+            if (OwnerId == -1)
+                return false;
+
+            return Input.GetButton("Boost" + OwnerId.ToString());
         }
     }
 
@@ -26,6 +50,7 @@ public class RaftInput : MonoBehaviour
 
     public void Update()
     {
+
     }
 
     public void SetOwner(int newId)
