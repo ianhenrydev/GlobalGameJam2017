@@ -6,6 +6,8 @@ namespace RaftGame {
 	
 	public class RaftShooting : MonoBehaviour {
 
+		private RaftInput InputComponent;
+
 		public int PlayerNumber = 1;
 		public Rigidbody Wave;		// Wave Prefab class
 		public Transform FireTransform;		// Child of Raft
@@ -34,13 +36,11 @@ namespace RaftGame {
 		}
 
 		void Awake() {
-
+			InputComponent = GetComponent<RaftInput> ();
 		}
 
 		// Use this for initialization
 		void Start () {
-			FireButton = "Fire" + PlayerNumber;
-
 			ChargeSpeed = (MaxLaunchForce - MinLaunchForce) / MaxChargeTime;
 		}
 
@@ -52,16 +52,16 @@ namespace RaftGame {
 				CurrentLaunchForce = MaxLaunchForce;
 				Fire ();
 
-			} else if (Input.GetButtonDown (FireButton)) {
+			} else if (InputComponent.IsFiring) {
 				// Reset the fire state
 				isFired = false;
 				CurrentLaunchForce = MinLaunchForce;
-			} else if (Input.GetButton (FireButton) && !isFired) {
+			} else if (InputComponent.IsFiring && !isFired) {
 				// Charging the shots
 				CurrentLaunchForce += ChargeSpeed * Time.deltaTime;
 
 				// Aimslider value change
-			} else if (Input.GetButtonUp(FireButton) && !isFired) {
+			} else if (InputComponent.IsFiring && !isFired) {
 				Fire ();
 			}
 		}

@@ -34,9 +34,7 @@ public class RaftMover : MonoBehaviour
         InputComponent = GetComponent<RaftInput>();
         RigidBodyComponent = GetComponent<Rigidbody>();
 
-        MoveSpeed = Speed;
-
-        
+        MoveSpeed = Speed;   
     }
 
     private void Update()
@@ -56,15 +54,21 @@ public class RaftMover : MonoBehaviour
 
             HandleBoost();
         }
-    }
 
+		print (InputComponent.InputThrust);
+    }
+		
     private void Thrust(float amount)
     {
+		// Thrust the raft by its movement speed (this is velocity?)
+		// acceleration = v * dt
+		// Force = mass * acceleration
         RigidBodyComponent.AddForce(transform.forward * MoveSpeed * Time.deltaTime);
     }
 
     private void Rotate(float amount)
     {
+		// Rotation angle = rotational velocity * dt
         transform.Rotate(transform.up, amount * TurnSpeed * Time.deltaTime);
     }
 
