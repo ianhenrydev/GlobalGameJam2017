@@ -15,8 +15,7 @@ public class RaftGameInterfaces : MonoBehaviour {
 		
 	}
 }
-
-[Serializable]
+	
 public class GameStartEvent : UnityEvent<string> {
 
 }
