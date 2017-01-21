@@ -35,6 +35,8 @@ public class RaftMover : MonoBehaviour
         RigidBodyComponent = GetComponent<Rigidbody>();
 
         MoveSpeed = Speed;
+
+
     }
 
     private void Update()

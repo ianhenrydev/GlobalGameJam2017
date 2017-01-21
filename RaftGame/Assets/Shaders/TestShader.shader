@@ -41,7 +41,6 @@ Shader "RaftGameShaders/WaterShader" {
 		#define UNITY_PASS_FORWARDBASE
 		#include "UnityCG.cginc"
 		#pragma multi_compile_fwdbase
-		#pragma exclude_renderers metal d3d11_9x xbox360 xboxone ps3 ps4 psp2 
 		#pragma target 3.0
 
 		uniform half _OpacityOut;
