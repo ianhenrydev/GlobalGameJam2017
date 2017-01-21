@@ -9,12 +9,13 @@ namespace RaftGame {
 
 		public GameObject m_RaftPrefab;
 		public RaftManager[] m_Rafts;
+		public static List<Player> players = new List<Player>();
 
 		private int m_PlayerCount; 
 
 		void Awake() {
 			print ("Initializing Game Manager");
-
+			// players = new List<Player>();
 			// TODO: This should be set by MainMenu after player lobby finishes
 			PlayerPrefs.SetInt ("Player Count", 2);
 			PlayerPrefs.SetString ("Player1.Color", Color.red.ToString ());
@@ -23,7 +24,6 @@ namespace RaftGame {
 		// Use this for initialization
 		void Start () {
 			print ("Starting Game Manager");
-
 			m_PlayerCount = PlayerPrefs.GetInt ("Player Count");
 			print ("Number of players: " + m_PlayerCount);
 
@@ -57,3 +57,23 @@ namespace RaftGame {
 		}
 	}
 } // end of namespace
+public struct Player {
+	int idVal;
+	int teamVal;
+	public int id {
+		get {
+			return idVal;
+		}
+		set {
+			idVal = value;
+		}
+	}
+	public int team {
+		get {
+			return teamVal;
+		}
+		set {
+			teamVal = value;
+		}
+	}
+}
