@@ -28,7 +28,7 @@ public class RaftInput : MonoBehaviour
             if (OwnerId == -1)
                 return 0;
 
-            return Input.GetAxis("Thrust" + OwnerId.ToString());
+            return Mathf.Clamp01(-Input.GetAxis("Thrust" + OwnerId.ToString()));
         }
     }
 

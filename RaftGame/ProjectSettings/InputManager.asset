@@ -77,9 +77,9 @@ InputManager:
     positiveButton: up
     altNegativeButton: s
     altPositiveButton: w
-    gravity: 1
-    dead: 0.3
-    sensitivity: 1
+    gravity: 1000
+    dead: 0.01
+    sensitivity: 1000
     snap: 1
     invert: 0
     type: 2
@@ -93,9 +93,9 @@ InputManager:
     positiveButton: 
     altNegativeButton: 
     altPositiveButton: 
-    gravity: 1
+    gravity: 1000
     dead: 0.3
-    sensitivity: 1
+    sensitivity: 1000
     snap: 1
     invert: 0
     type: 2
@@ -109,9 +109,9 @@ InputManager:
     positiveButton: 
     altNegativeButton: 
     altPositiveButton: 
-    gravity: 3
-    dead: 0.001
-    sensitivity: 3
+    gravity: 1000
+    dead: 0.3
+    sensitivity: 1000
     snap: 1
     invert: 0
     type: 2
@@ -125,9 +125,9 @@ InputManager:
     positiveButton: 
     altNegativeButton: 
     altPositiveButton: 
-    gravity: 1
+    gravity: 1000
     dead: 0.3
-    sensitivity: 1
+    sensitivity: 1000
     snap: 1
     invert: 0
     type: 2
@@ -138,15 +138,15 @@ InputManager:
     descriptiveName: 
     descriptiveNegativeName: 
     negativeButton: 
-    positiveButton: 
+    positiveButton: joystick button 2
     altNegativeButton: 
     altPositiveButton: 
-    gravity: 1
+    gravity: 1000
     dead: 0.3
-    sensitivity: 1
+    sensitivity: 1000
     snap: 1
     invert: 0
-    type: 2
+    type: 0
     axis: 2
     joyNum: 1
   - serializedVersion: 3
@@ -154,49 +154,49 @@ InputManager:
     descriptiveName: 
     descriptiveNegativeName: 
     negativeButton: 
-    positiveButton: 
+    positiveButton: joystick button 2
     altNegativeButton: 
     altPositiveButton: 
-    gravity: 1
+    gravity: 1000
     dead: 0.3
-    sensitivity: 1
+    sensitivity: 1000
     snap: 1
     invert: 0
-    type: 2
+    type: 0
     axis: 2
-    joyNum: 1
+    joyNum: 2
   - serializedVersion: 3
     m_Name: Boost2
     descriptiveName: 
     descriptiveNegativeName: 
     negativeButton: 
-    positiveButton: 
+    positiveButton: joystick button 2
     altNegativeButton: 
     altPositiveButton: 
-    gravity: 1
+    gravity: 1000
     dead: 0.3
-    sensitivity: 1
+    sensitivity: 1000
     snap: 1
     invert: 0
     type: 2
     axis: 2
-    joyNum: 1
+    joyNum: 3
   - serializedVersion: 3
     m_Name: Boost3
     descriptiveName: 
     descriptiveNegativeName: 
     negativeButton: 
-    positiveButton: 
+    positiveButton: joystick button 2
     altNegativeButton: 
     altPositiveButton: 
-    gravity: 1
+    gravity: 1000
     dead: 0.3
-    sensitivity: 1
+    sensitivity: 1000
     snap: 1
     invert: 0
     type: 2
     axis: 2
-    joyNum: 1
+    joyNum: 4
   - serializedVersion: 3
     m_Name: Fire1
     descriptiveName: 

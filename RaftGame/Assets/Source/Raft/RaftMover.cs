@@ -6,9 +6,6 @@ using UnityEngine.EventSystems;
 [RequireComponent(typeof(Rigidbody))]
 public class RaftMover : MonoBehaviour
 {
-    private const float MOVE_SPEED = 600.0f;
-    private const float BOOST_MOVE_SPEED = 1300.0f;
-
     #region Private Members
     private RaftInput InputComponent;
     private Rigidbody RigidBodyComponent;
@@ -16,12 +13,20 @@ public class RaftMover : MonoBehaviour
 
     private float BoostAmount = 0.0f;
     private float MoveSpeed = 0.0f;
+
+    //Timers
+    private float BoostTimer = 0.0f;
+
+    private bool HasBoosted = false;
     #endregion
 
     #region Public Members
-    public float MaxBoostAmount = 100;
+    [Header("Movement")]
+    public float Speed = 600.0f;
+    public float Acceleration = 100.0f;
     public float TurnSpeed = 30.0f;
-    public float BoostDecaySpeed = 1.0f;
+
+    [Header("Boost Properties")] public float BoostCooldownTime = 1.0f;
     #endregion
 
     public void Awake()
@@ -29,7 +34,7 @@ public class RaftMover : MonoBehaviour
         InputComponent = GetComponent<RaftInput>();
         RigidBodyComponent = GetComponent<Rigidbody>();
 
-        MoveSpeed = MOVE_SPEED;
+        MoveSpeed = Speed;
     }
 
     private void Update()
@@ -37,59 +42,50 @@ public class RaftMover : MonoBehaviour
         if (RigidBodyComponent != null
             && InputComponent != null)
         {
-            if (InputComponent.InputVector != Vector3.zero)
+            if (InputComponent.InputThrust != 0)
             {
-                //Rotate raft to input vector direction
-                Vector3 relativePos = (transform.position + InputComponent.InputVector) - transform.position;
-                TargetRotation = Quaternion.Slerp(TargetRotation,
-                    Quaternion.LookRotation(relativePos), Time.deltaTime * TurnSpeed);
-
-                transform.rotation = TargetRotation;
+                Thrust(InputComponent.InputThrust);
             }
 
-            print(InputComponent.InputThrust);
-        }
+            if (InputComponent.InputVector.x != 0)
+            {
+                Rotate(InputComponent.InputVector.x);
+            }
 
-        //Handle boost
-        if (InputComponent.IsBoosting)
-        {
-            Boost();
-        }
-        else if (MoveSpeed == BOOST_MOVE_SPEED)
-        {
-            EndBoost();
+            HandleBoost();
         }
     }
 
-    private void FixedUpdate()
+    private void Thrust(float amount)
     {
-        //Move raft
-        RigidBodyComponent.AddForce(
-            new Vector3(
-                InputComponent.InputVector.x,
-                0,
-                InputComponent.InputVector.z) * Time.deltaTime * MoveSpeed);
+        RigidBodyComponent.AddForce(transform.forward * MoveSpeed * Time.deltaTime);
     }
 
-    private void Boost()
+    private void Rotate(float amount)
     {
-        if (BoostAmount > 0)
-        {
-            //Turn on boost fx
-            MoveSpeed = BOOST_MOVE_SPEED;
+        transform.Rotate(transform.up, amount * TurnSpeed * Time.deltaTime);
+    }
 
-            //Decay boost
-            BoostAmount -= BoostDecaySpeed * Time.deltaTime;
+    private void HandleBoost()
+    {
+        if (!HasBoosted)
+        {
+            if (InputComponent.IsBoosting)
+            {
+                //Do boost stuff here
+                //....
+
+                BoostTimer = BoostCooldownTime;
+                HasBoosted = true;
+            }
         }
         else
         {
-            EndBoost();
+            BoostTimer -= Time.deltaTime;
+            if (BoostTimer <= 0)
+            {
+                HasBoosted = false;
+            }
         }
-    }
-
-    private void EndBoost()
-    {
-        //Turn off boost particle fx
-        MoveSpeed = MOVE_SPEED;
     }
 }
