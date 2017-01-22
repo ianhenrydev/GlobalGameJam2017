@@ -133,6 +133,8 @@ namespace RaftGame
                 GameObject.Instantiate<GameObject>(
                     Resources.Load<GameObject>("GameBall")).GetComponent<GameBall>();
 
+            BallInstance.OnBallDeath += OnBallDeath;
+
             BallInstance.RigidBodyComponent.isKinematic = true;
             BallInstance.transform.position = new Vector3(-3.5f, 10, 0);
 
@@ -190,11 +192,23 @@ namespace RaftGame
         }
 
         /// <summary>
-        /// End the round and stop timers
+        /// End the round and stop timers.
+        /// Plays OnGoal
         /// </summary>
         /// <returns></returns>
         private IEnumerator EndRound()
         {
+            var goalTimer = 4.0f;
+
+            while (goalTimer > 0.0f)
+            {
+                goalTimer -= Time.deltaTime;
+                Time.timeScale = 0.6f;
+                yield return null;
+            }
+
+            Time.timeScale = 1.0f;
+
             CurrentGameState = E_GAME_STATE.WAITING;
             OnRoundEnd.Invoke();
             yield return null;
@@ -302,6 +316,18 @@ namespace RaftGame
             }
 
             yield return null;
+        }
+
+        /// <summary>
+        /// Called when the ball has been scored on [team].
+        /// </summary>
+        private void OnBallDeath(int team)
+        {
+            if (team != -1)
+            {
+                StartCoroutine(EndRound());
+                BallInstance = null;
+            }
         }
 
         /// <summary>
