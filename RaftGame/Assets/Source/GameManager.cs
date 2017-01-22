@@ -355,7 +355,7 @@ namespace RaftGame
                 Players = new List<Player>();
             }
 
-            Players.Add(new RaftGame.Player(Players.Count, team));
+            Players.Add(new RaftGame.Player(Players.Count - 1, team));
         }
 
         public static void RemovePlayerFromGame(int playerId)

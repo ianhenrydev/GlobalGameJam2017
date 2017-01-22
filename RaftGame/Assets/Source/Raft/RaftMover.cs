@@ -53,7 +53,7 @@ public class RaftMover : MonoBehaviour
                 Thrust(InputComponent.InputThrust);
             }
 
-            if (InputComponent.InputVector.x != 0.0f)
+            if (Mathf.Abs(InputComponent.InputVector.x) >= 0.3f)
             {
                 Rotate(InputComponent.InputVector.x);
             }
@@ -63,19 +63,17 @@ public class RaftMover : MonoBehaviour
             if (RigidBodyComponent.velocity == Vector3.zero
                 && LastVelocity != Vector3.zero)
             {
-                //Started moving
                 for(int i = 0; i < VelocityFX.Length; i++)
                 {
-                    VelocityFX[i].Play();
+                    VelocityFX[i].Stop(true);
                 }
             }
             else if (RigidBodyComponent.velocity != Vector3.zero
                 && LastVelocity == Vector3.zero)
             {
-                //Stopped moving
                 for (int i = 0; i < VelocityFX.Length; i++)
                 {
-                    VelocityFX[i].Pause();
+                    VelocityFX[i].Play(true);
                 }
             }
 
