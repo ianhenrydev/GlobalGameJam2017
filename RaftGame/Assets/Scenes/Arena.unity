@@ -41108,6 +41108,8 @@ MonoBehaviour:
   - {fileID: 118572573}
   TimeForRoundStart: 3
   TimeForCompleteMatch: 160
+  OnGoalSFX: {fileID: 0}
+  OnBallExplodeSFX: {fileID: 0}
   OnMatchStart:
     m_PersistentCalls:
       m_Calls: []

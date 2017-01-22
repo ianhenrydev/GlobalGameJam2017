@@ -63,6 +63,7 @@ namespace RaftGame
         //Game state
         public E_GAME_STATE CurrentGameState { get; private set; }
         public bool GameIsPaused { get; private set; }
+        public bool MatchCompleted { get; private set; }
 
         //Object prefabs
         public GameObject m_RaftPrefab;
@@ -74,6 +75,10 @@ namespace RaftGame
         //Round start/end info
         public float TimeForRoundStart = 3.0f;
         public float TimeForCompleteMatch = 160.0f;
+
+        //Audio componentes
+        public AudioSource OnGoalSFX;
+        public AudioSource OnBallExplodeSFX;
 
         //Events
         public UnityEvent OnMatchStart = new UnityEvent();
@@ -212,6 +217,8 @@ namespace RaftGame
                 yield return null;
             }
 
+            if(GameIsPaused)
+
             Time.timeScale = 1.0f;
             
             //Reset round
@@ -230,6 +237,7 @@ namespace RaftGame
             //Swap hud
             SetGameCanvas(2);
             CurrentGameState = E_GAME_STATE.ENDGAME;
+            MatchCompleted = true;
             OnEndMatch.Invoke();
 
 			UI_HUD_EndGame.printScore (TeamScoreA, TeamScoreB);
@@ -259,6 +267,7 @@ namespace RaftGame
         /// <returns></returns>
         private IEnumerator ResetGame()
         {
+            MatchCompleted = false;
             TeamScoreA = 0;
             TeamScoreB = 0;
 
@@ -320,6 +329,7 @@ namespace RaftGame
             var newRaft = GameObject.Instantiate(Resources.Load<GameObject>("Raft"));
             if (newRaft != null)
             {
+                newRaft.GetComponent<RaftInput>().SetOwner(player.Id);
                 newRaft.transform.position = spawnPoint.position;
                 newRaft.transform.rotation = spawnPoint.rotation;
 
@@ -339,6 +349,11 @@ namespace RaftGame
         {
             if (team != -1)
             {
+                if (OnBallExplodeSFX != null)
+                {
+                    OnBallExplodeSFX.Play();
+                }
+
                 StartCoroutine(EndRound());
                 BallInstance = null;
             }
@@ -428,6 +443,20 @@ namespace RaftGame
         public void RestartGame()
         {
             SceneManager.LoadScene("Arena");
+        }
+
+        public static Color IdToColor(int id)
+        {
+            if (id == 0)
+                return Color.blue;
+            if (id == 1)
+                return Color.cyan;
+            if (id == 2)
+                return Color.red;
+            if (id == 3)
+                return Color.magenta * 0.5f;
+
+            return Color.white;
         }
     }
 }
