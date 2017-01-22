@@ -8,7 +8,6 @@ using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.SceneManagement;
 
-
 public enum E_GAME_STATE
 {
     STARTGAME,
@@ -19,6 +18,10 @@ public enum E_GAME_STATE
 
 namespace RaftGame
 {
+    /// <summary>
+    /// The struct for every player in the game.
+    /// Should not be instanced directly.
+    /// </summary>
     public struct Player
     {
         [DefaultValue(-1)]
@@ -39,6 +42,7 @@ namespace RaftGame
 
     public class GameManager : MonoBehaviour
     {
+        #region Private Members
         //Important Component Instances
         private GameBall BallInstance;
 
@@ -49,8 +53,14 @@ namespace RaftGame
         private PauseScreenController UI_HUD_PauseGame;
         private GameScreenController UI_HUD_Game;
         private EndGameScreenController UI_HUD_EndGame;
+        #endregion
 
+        #region Static Members
         public static GameManager Instance;
+        public static List<Player> Players { get; private set; }
+        #endregion
+
+        #region Public Members
 
         //Game state
         public E_GAME_STATE CurrentGameState { get; private set; }
@@ -64,8 +74,8 @@ namespace RaftGame
         public Transform[] TeamBSpawns;
 
         //Round start/end info
-        public float RoundStartDelay = 3.0f;
-        public float RoundEndDelay = 3.0f;
+        public float TimeForRoundStart = 3.0f;
+        public float TimeForCompleteMatch = 160.0f;
 
         //Events
         public UnityEvent OnMatchStart = new UnityEvent();
@@ -77,28 +87,27 @@ namespace RaftGame
 
         //Time containers
         public float GameTime { get; private set; }
-        public float WarmupTime {get; private set; }
+        public float WarmupTime { get; private set; }
 
         //Score containers
         public int TeamScoreA { get; private set; }
         public int TeamScoreB { get; private set; }
+        #endregion
 
-        public static List<Player> Players { get; private set; }
-
-        public void Awake()
+        private void Awake()
         {
             Instance = this;
             CurrentGameState = E_GAME_STATE.WAITING;
         }
 
-        public void Start()
+        private void Start()
         {
             GameTime = 99;
             CurrentGameState = E_GAME_STATE.WAITING;
             StartCoroutine(StartMatch());
         }
 
-        public void Update()
+        private void Update()
         {
             if (CurrentGameState == E_GAME_STATE.INROUND)
             {
@@ -123,6 +132,8 @@ namespace RaftGame
             BallInstance =
                 GameObject.Instantiate<GameObject>(
                     Resources.Load<GameObject>("GameBall")).GetComponent<GameBall>();
+
+            BallInstance.OnBallDeath += OnBallDeath;
 
             BallInstance.RigidBodyComponent.isKinematic = true;
             BallInstance.transform.position = new Vector3(-3.5f, 10, 0);
@@ -151,8 +162,7 @@ namespace RaftGame
             if (Players.Count > 3 && Players[3].Id >= 0)
                 StartCoroutine(SpawnRaft(TeamBSpawns[1], Players[3]));
 
-            GameTime = 0;
-            WarmupTime = RoundStartDelay;
+            GameTime = TimeForCompleteMatch;
             CurrentGameState = E_GAME_STATE.STARTGAME;
             OnMatchStart.Invoke();
 
@@ -166,6 +176,8 @@ namespace RaftGame
         /// <returns></returns>
         private IEnumerator StartRound()
         {
+            //Start countdown
+            WarmupTime = TimeForRoundStart;
             while (WarmupTime > 0)
             {
                 WarmupTime -= Time.deltaTime;
@@ -174,18 +186,28 @@ namespace RaftGame
 
             //Init the ball
             BallInstance.RigidBodyComponent.isKinematic = false;
-            GameTime = 5.0f;
             CurrentGameState = E_GAME_STATE.INROUND;
             OnRoundStart.Invoke();
             yield return null;
         }
 
         /// <summary>
-        /// End the round and stop timers
+        /// End the round and stop timers.
+        /// Plays OnGoal
         /// </summary>
         /// <returns></returns>
         private IEnumerator EndRound()
         {
+            var goalTimer = 4.0f;
+
+            while (goalTimer > 0.0f)
+            {
+                goalTimer -= Time.deltaTime;
+                Time.timeScale = 0.6f;
+                yield return null;
+            }
+
+            Time.timeScale = 1.0f;
 
             CurrentGameState = E_GAME_STATE.WAITING;
             OnRoundEnd.Invoke();
@@ -269,6 +291,46 @@ namespace RaftGame
         }
 
         /// <summary>
+        /// Fully spawns raft for [player] then assigns it to them.
+        /// </summary>
+        /// <param name="spawnPoint"></param>
+        /// <param name="player"></param>
+        /// <returns></returns>
+        private IEnumerator SpawnRaft(Transform spawnPoint, Player player)
+        {
+            //TODO: Play spawn fx
+
+            yield return new WaitForSeconds(1);
+
+            //Spawn raft
+            var newRaft = GameObject.Instantiate(Resources.Load<GameObject>("Raft"));
+            if (newRaft != null)
+            {
+                newRaft.transform.position = spawnPoint.position;
+                newRaft.transform.rotation = spawnPoint.rotation;
+
+                //TODO: Color the raft
+
+                //Assign raft to this player
+                player.ParentActor = newRaft;
+            }
+
+            yield return null;
+        }
+
+        /// <summary>
+        /// Called when the ball has been scored on [team].
+        /// </summary>
+        private void OnBallDeath(int team)
+        {
+            if (team != -1)
+            {
+                StartCoroutine(EndRound());
+                BallInstance = null;
+            }
+        }
+
+        /// <summary>
         /// Gives [team] [points].
         /// </summary>
         /// <param name="team"></param>
@@ -308,51 +370,7 @@ namespace RaftGame
             }
         }
 
-        /// <summary>
-        /// Fully spawns raft for [player] then assigns it to them.
-        /// </summary>
-        /// <param name="spawnPoint"></param>
-        /// <param name="player"></param>
-        /// <returns></returns>
-        private IEnumerator SpawnRaft(Transform spawnPoint, Player player)
-        {
-            //TODO: Play spawn fx
-
-            yield return new WaitForSeconds(1);
-
-            //Spawn raft
-            var newRaft = GameObject.Instantiate(Resources.Load<GameObject>("Raft"));
-            if (newRaft != null)
-            {
-                newRaft.transform.position = spawnPoint.position;
-                newRaft.transform.rotation = spawnPoint.rotation;
-
-                //TODO: Color the raft
-
-                //Assign raft to this player
-                player.ParentActor = newRaft;
-            }
-
-            yield return null;
-        }
-
-        //UI HOOKS
-        public void LeaveToMainMenu()
-        {
-            SceneManager.LoadScene("MainMenu");
-        }
-
-        public void QuitGame()
-        {
-            Application.Quit();
-        }
-
-        public void RestartGame()
-        {
-            SceneManager.LoadScene("Arena");
-        }
-
-        public static void AddPlayerToGame( int team )
+        public static void AddPlayerToGame(int team)
         {
             if (Players == null)
             {
@@ -380,6 +398,21 @@ namespace RaftGame
             }
 
             Players = playerList;
+        }
+
+        public void LeaveToMainMenu()
+        {
+            SceneManager.LoadScene("MainMenu");
+        }
+
+        public void QuitGame()
+        {
+            Application.Quit();
+        }
+
+        public void RestartGame()
+        {
+            SceneManager.LoadScene("Arena");
         }
     }
 }
