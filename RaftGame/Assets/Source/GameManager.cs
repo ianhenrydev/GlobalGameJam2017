@@ -203,6 +203,7 @@ namespace RaftGame
             CurrentGameState = E_GAME_STATE.ENDGAME;
             OnEndMatch.Invoke();
 
+			UI_HUD_EndGame.printScore (TeamScoreA, TeamScoreB);
             print("SCORE: " + TeamScoreA + " to " + TeamScoreB);
             yield return null;
         }
