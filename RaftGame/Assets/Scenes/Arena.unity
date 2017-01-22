@@ -15306,7 +15306,7 @@ GameObject:
   m_Component:
   - component: {fileID: 419980693}
   - component: {fileID: 419980694}
-  m_Layer: 0
+  m_Layer: 11
   m_Name: ere (26)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -41108,6 +41108,8 @@ MonoBehaviour:
   - {fileID: 118572573}
   TimeForRoundStart: 3
   TimeForCompleteMatch: 160
+  OnGoalSFX: {fileID: 0}
+  OnBallExplodeSFX: {fileID: 0}
   OnMatchStart:
     m_PersistentCalls:
       m_Calls: []

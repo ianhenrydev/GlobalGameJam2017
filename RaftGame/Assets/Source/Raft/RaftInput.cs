@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using RaftGame;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class RaftInput : MonoBehaviour
 {
@@ -11,6 +12,10 @@ public class RaftInput : MonoBehaviour
 	private string ThrustAxis;
 	private string BoostButton;
 	private string SteerAxis;
+
+    public Image KaratImg;
+    public Text PlayerNameText;
+
 	// private string Boost
 
 	// Return left right values
@@ -75,7 +80,6 @@ public class RaftInput : MonoBehaviour
 
     public void Awake()
     {
-		SetOwner (0);
     }
 
     public void Update()
@@ -93,7 +97,11 @@ public class RaftInput : MonoBehaviour
 			newId = -1;
 		}
 
-		FireButton = "Fire" + newId;
+        KaratImg.color = GameManager.IdToColor(newId);
+        PlayerNameText.color = GameManager.IdToColor(newId);
+        PlayerNameText.text = "Player" + (newId + 1).ToString();
+
+        FireButton = "Fire" + newId;
 		ThrustAxis = "Thrust" + newId;
 		BoostButton = "Boost" + newId;
 		SteerAxis = "Steer" + newId;
