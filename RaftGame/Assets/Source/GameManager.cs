@@ -110,6 +110,7 @@ namespace RaftGame
             if (CurrentGameState == E_GAME_STATE.INROUND)
             {
                 GameTime -= Time.deltaTime;
+				UI_HUD_Game.updateTime ((int)GameTime);
                 if (GameTime <= 0.0f)
                 {
                     StartCoroutine(EndMatch());
