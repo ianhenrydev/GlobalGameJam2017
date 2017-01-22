@@ -8,6 +8,7 @@ namespace RaftGame
     public class RaftShooting : MonoBehaviour
     {
         private RaftInput RaftInputcomponent;
+        private Rigidbody RigidbodyComponent;
         private bool HasFired = false;
         private float CooldownTimer = 0.0f;
 
@@ -16,10 +17,12 @@ namespace RaftGame
         public float PushStrength = 3.0f;
         public float CooldownTime = 1.0f;
         public float SpawnDistance = 3.0f;
+        public float RecoilStrength = 10.0f;
 
         private void Awake()
         {
             RaftInputcomponent = GetComponent<RaftInput>();
+            RigidbodyComponent = GetComponent<Rigidbody>();
         }
 
         private void Update()
@@ -62,8 +65,9 @@ namespace RaftGame
                                 .GetComponent<Rigidbody>();
 
                     waveInst.velocity = transform.forward * PushStrength;
-
                     WorldWaveController.SpawnWave(new Vector4(transform.position.x, transform.position.z, Vector3.Angle(transform.forward, Vector3.forward)));
+
+                    RigidbodyComponent.AddForce(-transform.forward * RecoilStrength, ForceMode.Impulse);
 
                     CooldownTimer = CooldownTime;
                     HasFired = true;

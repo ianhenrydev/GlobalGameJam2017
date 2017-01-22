@@ -73,6 +73,7 @@ GameObject:
   - component: {fileID: 223428469760319198}
   - component: {fileID: 114610297055146864}
   - component: {fileID: 114494301194657380}
+  - component: {fileID: 114245523027749796}
   m_Layer: 5
   m_Name: GameOverlayCanvas
   m_TagString: Untagged
@@ -80,6 +81,17 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
+--- !u!114 &114245523027749796
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1960600184289930}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 36ed8aa8a635453469f87765bf7249e0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &114441498466554264
 MonoBehaviour:
   m_ObjectHideFlags: 1

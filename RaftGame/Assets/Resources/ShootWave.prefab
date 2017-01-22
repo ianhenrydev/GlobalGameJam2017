@@ -342,6 +342,8 @@ MonoBehaviour:
   - {fileID: 198209126690783330}
   - {fileID: 198536080838147204}
   - {fileID: 198993417155974126}
+  BallHitPower: 60
+  PlayerHitPower: 20
 --- !u!135 &135229825930798854
 SphereCollider:
   m_ObjectHideFlags: 1
@@ -454,7 +456,7 @@ ParticleSystem:
       m_PostInfinity: 2
       m_RotationOrder: 4
     minMaxState: 0
-  moveWithTransform: 0
+  moveWithTransform: 1
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 1
   randomSeed: -1035345849
@@ -3058,7 +3060,7 @@ ParticleSystem:
   moveWithTransform: 0
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 1
-  randomSeed: 1083709552
+  randomSeed: -1066059774
   InitialModule:
     serializedVersion: 3
     enabled: 1
@@ -8179,10 +8181,10 @@ ParticleSystem:
       m_PostInfinity: 2
       m_RotationOrder: 4
     minMaxState: 0
-  moveWithTransform: 0
+  moveWithTransform: 1
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 1
-  randomSeed: 1662338967
+  randomSeed: -1040377070
   InitialModule:
     serializedVersion: 3
     enabled: 1
@@ -10747,7 +10749,7 @@ ParticleSystem:
   moveWithTransform: 1
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 1
-  randomSeed: 443765439
+  randomSeed: -1925093907
   InitialModule:
     serializedVersion: 3
     enabled: 1
@@ -13303,7 +13305,7 @@ ParticleSystem:
       m_PostInfinity: 2
       m_RotationOrder: 4
     minMaxState: 0
-  moveWithTransform: 0
+  moveWithTransform: 1
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 1
   randomSeed: -230000924
@@ -15868,10 +15870,10 @@ ParticleSystem:
       m_PostInfinity: 2
       m_RotationOrder: 4
     minMaxState: 0
-  moveWithTransform: 0
+  moveWithTransform: 1
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 1
-  randomSeed: -472999930
+  randomSeed: -313355173
   InitialModule:
     serializedVersion: 3
     enabled: 1
@@ -18433,10 +18435,10 @@ ParticleSystem:
       m_PostInfinity: 2
       m_RotationOrder: 4
     minMaxState: 0
-  moveWithTransform: 0
+  moveWithTransform: 1
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 1
-  randomSeed: 1607915988
+  randomSeed: -1863309891
   InitialModule:
     serializedVersion: 3
     enabled: 1

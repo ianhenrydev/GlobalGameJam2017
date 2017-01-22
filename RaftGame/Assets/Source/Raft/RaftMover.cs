@@ -14,6 +14,9 @@ public class RaftMover : MonoBehaviour
     private float BoostAmount = 0.0f;
     private float MoveSpeed = 0.0f;
 
+    //Containers
+    private Vector3 LastVelocity;
+
     //Timers
     private float BoostTimer = 0.0f;
 
@@ -26,7 +29,10 @@ public class RaftMover : MonoBehaviour
     public float Acceleration = 100.0f;
     public float TurnSpeed = 30.0f;
 
-    [Header("Boost Properties")] public float BoostCooldownTime = 1.0f;
+    [Header("Boost Properties")]
+    public float BoostCooldownTime = 1.0f;
+
+    public ParticleSystem[] VelocityFX;
     #endregion
 
     public void Awake()
@@ -41,7 +47,7 @@ public class RaftMover : MonoBehaviour
     {
         if (RigidBodyComponent != null
             && InputComponent != null)
-        {
+        { 
             if (InputComponent.InputThrust != 0.0f)
             {
                 Thrust(InputComponent.InputThrust);
@@ -53,6 +59,27 @@ public class RaftMover : MonoBehaviour
             }
 
             HandleBoost();
+
+            if (RigidBodyComponent.velocity == Vector3.zero
+                && LastVelocity != Vector3.zero)
+            {
+                //Started moving
+                for(int i = 0; i < VelocityFX.Length; i++)
+                {
+                    VelocityFX[i].Play();
+                }
+            }
+            else if (RigidBodyComponent.velocity != Vector3.zero
+                && LastVelocity == Vector3.zero)
+            {
+                //Stopped moving
+                for (int i = 0; i < VelocityFX.Length; i++)
+                {
+                    VelocityFX[i].Pause();
+                }
+            }
+
+            LastVelocity = RigidBodyComponent.velocity;
         }
 
 		// print (InputComponent.InputThrust);
@@ -60,7 +87,6 @@ public class RaftMover : MonoBehaviour
 		
     private void Thrust(float amount)
     {
-		print ("Thrusting by " + amount);
 		// Thrust the raft by its movement speed (this is velocity?)
 		// acceleration = v * dt
 		// Force = mass * acceleration
@@ -69,8 +95,6 @@ public class RaftMover : MonoBehaviour
 
     private void Rotate(float amount)
     {
-		print ("Rotating by " + amount);
-
 		// Rotation angle = rotational velocity * dt
         transform.Rotate(transform.up, amount * TurnSpeed * Time.deltaTime);
     }
