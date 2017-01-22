@@ -26,19 +26,7 @@ namespace RaftGame
                 int team1count = 0;
                 int team2count = 0;
 
-                /*
-                if (RaftGame.GameManager.Players.Count > 0)
-                {
-                    SceneManager.LoadScene("Arena");
-                    return;
-                }
-                else
-                {
-                    return;
-                }
-
-                //vvvvvv THIS WILL NEVER BE CALLED!!!! vvvvvvvv
-                foreach (Player player in RaftGame.GameManager.Players)
+                foreach (Player player in GameManager.Players)
                 {
                     if (player.Team == 1)
                     {
@@ -53,13 +41,12 @@ namespace RaftGame
                 // If both teams have at least one player then load the game round
                 if (team1count > 0 && team2count > 0)
                 {
-                    SceneManager.LoadScene("GameScene");
+                    SceneManager.LoadScene("Arena");
                 }
                 else
                 {
                     Debug.Log("Empty team");
                 }
-                */
             }
         }
 

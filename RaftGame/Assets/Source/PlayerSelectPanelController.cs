@@ -12,6 +12,7 @@ public class PlayerSelectPanelController : MonoBehaviour
     public GameObject promptText;
     public Text teamText;
     public int playerNum;
+	private int playerId = -1; //this is different from the player num!!!! this is the game manager's player id
 
     // private string SubmitButton;
 
@@ -35,7 +36,7 @@ public class PlayerSelectPanelController : MonoBehaviour
             {
                 promptText.SetActive(false);
                 joinedLayout.SetActive(true);
-                //RaftGame.GameManager.Players.Add(player);
+				addPlayer ();
                 playerJoined = !playerJoined;
             }
         }
@@ -45,7 +46,8 @@ public class PlayerSelectPanelController : MonoBehaviour
             {
                 promptText.SetActive(true);
                 joinedLayout.SetActive(false);
-                //RaftGame.GameManager.Players.Remove(player);
+				if (playerId > 0)
+					GameManager.RemovePlayerFromGame (playerId);
                 playerJoined = !playerJoined;
             }
         }
@@ -58,6 +60,11 @@ public class PlayerSelectPanelController : MonoBehaviour
         }
     }
 
+	private void addPlayer() {
+		GameManager.AddPlayerToGame (player.Team);
+		playerId = GameManager.Players [GameManager.Players.Count - 1].Id;
+	}
+
     public void onClickTeam()
     {
         switchTeam();
@@ -65,7 +72,8 @@ public class PlayerSelectPanelController : MonoBehaviour
 
     private void switchTeam()
     {
-        //RaftGame.GameManager.Players.Remove(player);
+		if (playerId > 0)
+			GameManager.RemovePlayerFromGame (playerId);
         if (player.Team == 1)
         {
             player.Team = 2;
@@ -75,6 +83,6 @@ public class PlayerSelectPanelController : MonoBehaviour
             player.Team = 1;
         }
         teamText.text = "Team " + player.Team.ToString();
-        //RaftGame.GameManager.Players.Add(player);
+		addPlayer ();
     }
 }
