@@ -47,7 +47,7 @@ public class RaftMover : MonoBehaviour
     {
         if (RigidBodyComponent != null
             && InputComponent != null)
-        {
+        { 
             if (InputComponent.InputThrust != 0.0f)
             {
                 Thrust(InputComponent.InputThrust);

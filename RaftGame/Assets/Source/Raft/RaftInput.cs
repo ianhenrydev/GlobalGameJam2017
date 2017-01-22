@@ -75,7 +75,7 @@ public class RaftInput : MonoBehaviour
 
     public void Awake()
     {
-		SetOwner (-1);
+		SetOwner (0);
     }
 
     public void Update()
