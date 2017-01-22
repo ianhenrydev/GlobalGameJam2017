@@ -15306,7 +15306,7 @@ GameObject:
   m_Component:
   - component: {fileID: 419980693}
   - component: {fileID: 419980694}
-  m_Layer: 0
+  m_Layer: 11
   m_Name: ere (26)
   m_TagString: Untagged
   m_Icon: {fileID: 0}

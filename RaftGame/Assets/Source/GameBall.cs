@@ -12,6 +12,9 @@ public class GameBall : MonoBehaviour
     public ParticleSystem OnKillFX;
     public ParticleSystem OnSplashFX;
 
+    public AudioSource OnBounceSFX;
+    public AudioSource OnSplashSFX;
+
     public void Awake()
     {
         RigidBodyComponent = GetComponent<Rigidbody>();
@@ -26,6 +29,7 @@ public class GameBall : MonoBehaviour
 
         if (OnKillFX != null)
         {
+            OnKillFX.gameObject.SetActive(true);
             OnKillFX.transform.SetParent(null, true);
             OnKillFX.Play();
             GameObject.Destroy(OnKillFX.gameObject, 8);
@@ -44,11 +48,22 @@ public class GameBall : MonoBehaviour
             print("Touched Water");
             if (OnSplashFX != null)
             {
+                OnKillFX.gameObject.SetActive(true);
                 OnSplashFX.Emit(250);
+            }
+
+            if (OnSplashSFX != null)
+            {
+                OnSplashSFX.Play();
             }
         }
         else
         {
+            if (OnBounceSFX != null)
+            {
+                OnBounceSFX.Play();
+            }
+
             print("Touched Something else");
         }
     }
