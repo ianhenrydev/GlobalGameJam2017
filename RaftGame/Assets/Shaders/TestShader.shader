@@ -1,4 +1,6 @@
-﻿
+﻿// Upgrade NOTE: replaced '_Object2World' with 'unity_ObjectToWorld'
+
+
 Shader "RaftGameShaders/WaterShader" {
 	Properties{
 		_FoamGradient("FoamGradient", 2D) = "white" {}
@@ -17,6 +19,8 @@ Shader "RaftGameShaders/WaterShader" {
 		_OpacityIn("OpacityIn", Range(0, 1)) = 0
 		_OpacityOut("OpacityOut", Range(0, 1)) = 0
 		_ShorePower("ShorePower", Float) = 0
+		_MaxWaveHeight("MaxWaveHeight", Float) = 0.0
+		_HotSpotDistanceBias("Hotspot Dist Bias", Float) = 0.0
 		[HideInInspector]_Cutoff("Alpha cutoff", Range(0,1)) = 0.5
 	}
 		SubShader
@@ -52,6 +56,8 @@ Shader "RaftGameShaders/WaterShader" {
 		uniform float _FoamSpeed;
 		uniform float _DepthColorPow;
 		uniform float _ShorePower;
+		uniform float _MaxWaveHeight; 
+		uniform float _HotSpotDistanceBias;
 
 		uniform float4 _TimeEditor; 
 		uniform float4 _WaterColor;
@@ -66,6 +72,8 @@ Shader "RaftGameShaders/WaterShader" {
 		uniform fixed _OpacityIn;
 		uniform fixed _Append;
 
+		uniform float3 _WaveHotSpots[100];
+
 	struct VertexInput
 	{
 		float4 vertex : POSITION;
@@ -77,16 +85,40 @@ Shader "RaftGameShaders/WaterShader" {
 		float4 pos : SV_POSITION;
 		float2 uv0 : TEXCOORD0;
 		float4 projPos : TEXCOORD1;
+		float3 worldPos : TEXCOORD2;
 	};
 
 	VertexOutput vert(VertexInput v)
 	{
 		VertexOutput o = (VertexOutput)0;
+
+		float4 objPos = mul(unity_ObjectToWorld, float4(0, 0, 0, 1));
+		float4 worldPos = mul(unity_ObjectToWorld, v.vertex);
+
+		float attraction = 0.0f;
+		for (uint i = 0; i < 100; i++)
+		{
+			if (!(_WaveHotSpots[i].x == 0
+				&& _WaveHotSpots[i].y == 0
+				&& _WaveHotSpots[i].z == 0))
+			{
+				float dist = distance(worldPos, _WaveHotSpots[i]);
+				float normalizedDist = clamp(_MaxWaveHeight - (dist * _HotSpotDistanceBias), 0, _MaxWaveHeight);
+				attraction += normalizedDist;
+			}
+		}
+
+		v.vertex.y = attraction;
+
 		o.uv0 = v.texcoord0;
-		float4 objPos = mul(unity_ObjectToWorld, float4(0,0,0,1));
+
+		o.worldPos = worldPos;
 		o.pos = mul(UNITY_MATRIX_MVP, v.vertex);
+
 		o.projPos = ComputeScreenPos(o.pos);
+
 		COMPUTE_EYEDEPTH(o.projPos.z);
+
 		return o;
 	}
 
@@ -124,6 +156,7 @@ Shader "RaftGameShaders/WaterShader" {
 		float3 emissive = (lerp((_WaterColor.rgb*(depthVal*_DepthColorPow)),_FoamColor.rgb,saturate((dot(_FoamGradient_var.rgb,float3(0.3,0.59,0.11))*foamToCamDot*(1.0 - (_Foam_var.rgb*(depthVal / _FoamDepthPower))))))*((1.1 - clamp(saturate((sceneZ - partZ) / _Depth),0.9,1))*(_ShorePower)));
 		float3 finalColor = emissive;
 		return fixed4(finalColor,(0.0 + ((depthVal - _OpacityIn) * (1.0 - 0.0)) / (_OpacityOut - _OpacityIn)));
+		
 	}
 		ENDCG
 	}

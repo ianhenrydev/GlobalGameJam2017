@@ -61,7 +61,7 @@ Material:
         name: _Foam
       second:
         m_Texture: {fileID: 2800000, guid: a9578d9d9d3bff24e9728a8c361bd561, type: 3}
-        m_Scale: {x: 30, y: 30}
+        m_Scale: {x: 80, y: 80}
         m_Offset: {x: 0, y: 0}
     - first:
         name: _FoamGradient
@@ -117,7 +117,7 @@ Material:
       second: 84
     - first:
         name: _BumpPower
-      second: -0.01
+      second: 0.3
     - first:
         name: _BumpScale
       second: 1
@@ -126,10 +126,10 @@ Material:
       second: 0.5
     - first:
         name: _Depth
-      second: 1.3
+      second: 0.98
     - first:
         name: _DepthColorPow
-      second: 0.45
+      second: 0.6
     - first:
         name: _DepthDeepPower
       second: 5.51
@@ -141,24 +141,30 @@ Material:
       second: 0
     - first:
         name: _FoamDepthPower
-      second: 0.25
+      second: 0.15
     - first:
         name: _FoamPower
       second: 1.9
     - first:
         name: _FoamSaturationPower
-      second: 1
+      second: 0.48
     - first:
         name: _FoamSpeed
       second: 0.4
     - first:
         name: _FoamStrength
-      second: 0.95
+      second: 0.4
     - first:
         name: _FoamTime
       second: 0
     - first:
         name: _Glossiness
+      second: 0
+    - first:
+        name: _HotSpotDistanceBias
+      second: 0
+    - first:
+        name: _MaxWaveHeight
       second: 0
     - first:
         name: _Metallic
@@ -171,10 +177,10 @@ Material:
       second: 1
     - first:
         name: _OpacityIn
-      second: 0
+      second: 0.041
     - first:
         name: _OpacityOut
-      second: 0.353
+      second: 0.407
     - first:
         name: _Parallax
       second: 0.02
@@ -183,7 +189,7 @@ Material:
       second: 1
     - first:
         name: _ShorePower
-      second: 31.6
+      second: 27.61
     - first:
         name: _SrcBlend
       second: 1
