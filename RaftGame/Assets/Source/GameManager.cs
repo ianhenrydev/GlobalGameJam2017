@@ -84,13 +84,13 @@ namespace RaftGame {
 		private IEnumerator RoundStarting() {
 			print ("Round starting");
 
+			SpawnBall ();
+
 			yield return StartWait;
 		}
 
 		private IEnumerator RoundPlaying() {
 			print ("round playing");
-
-			SpawnBall ();
 
 			// Move onto next frame
 			yield return null;
@@ -111,6 +111,7 @@ namespace RaftGame {
 
 			GameObject ball_spawn = GameObject.FindGameObjectWithTag ("Ball Spawn");
 			if (ball_spawn) {
+				// Transform incorrect
 				m_BallInstance = Instantiate(m_BallPrefab, ball_spawn.transform);
 			}
 		}
@@ -124,9 +125,10 @@ namespace RaftGame {
 				Transform spawn_transform = player_spawns.Pop ().transform;
 
 				RaftManager raft = new RaftManager();
-				raft.SetPlayer(player);
 				raft.m_Instance = Instantiate (m_RaftPrefab, spawn_transform);
-			
+				raft.Setup ();
+				raft.SetPlayer(player);
+
 				m_Rafts.Add (raft);
 			}
 		}
