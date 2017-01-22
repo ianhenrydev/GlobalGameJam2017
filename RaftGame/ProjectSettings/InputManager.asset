@@ -198,7 +198,7 @@ InputManager:
     axis: 2
     joyNum: 4
   - serializedVersion: 3
-    m_Name: Fire1
+    m_Name: Fire0
     descriptiveName: 
     descriptiveNegativeName: 
     negativeButton: 
@@ -396,7 +396,7 @@ InputManager:
     negativeButton: 
     positiveButton: joystick 1 button 16
     altNegativeButton: 
-    altPositiveButton: 
+    altPositiveButton: joystick 1 button 0
     gravity: 1000
     dead: 0.3
     sensitivity: 1000
@@ -412,7 +412,7 @@ InputManager:
     negativeButton: 
     positiveButton: joystick 2 button 16
     altNegativeButton: 
-    altPositiveButton: 
+    altPositiveButton: joystick 2 button 0
     gravity: 1000
     dead: 0.3
     sensitivity: 1000
