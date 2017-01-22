@@ -21,4 +21,20 @@ public class GameBall : MonoBehaviour
             OnBallDeath(team);
         }
     }
+
+    private void OnCollisionEnter(Collision collision)
+    {
+        //Play bounce audio
+
+        //Play splash fx if water
+        if (collision.gameObject.layer == 4)
+        {
+            print("Touched Water");
+        }
+        else
+        {
+            print("Touched Something else");
+        }
+        
+    }
 }
