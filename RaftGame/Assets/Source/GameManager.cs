@@ -232,6 +232,7 @@ namespace RaftGame
             CurrentGameState = E_GAME_STATE.ENDGAME;
             OnEndMatch.Invoke();
 
+			UI_HUD_EndGame.printScore (TeamScoreA, TeamScoreB);
             print("SCORE: " + TeamScoreA + " to " + TeamScoreB);
             yield return null;
         }
@@ -360,6 +361,7 @@ namespace RaftGame
                 {
                     Instance.TeamScoreB += points;
                 }
+				Instance.UI_HUD_Game.updateTeamScore (Instance.TeamScoreA, Instance.TeamScoreB);
             }
         }
 
