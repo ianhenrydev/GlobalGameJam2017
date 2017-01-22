@@ -6,10 +6,10 @@ Material:
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
-  m_Name: Dev_Basic
-  m_Shader: {fileID: 4800000, guid: 3ab0514b268268f44afbf222ddca9fe5, type: 3}
-  m_ShaderKeywords: 
-  m_LightmapFlags: 5
+  m_Name: WaveMat
+  m_Shader: {fileID: 202, guid: 0000000000000000f000000000000000, type: 0}
+  m_ShaderKeywords: _EMISSION
+  m_LightmapFlags: 1
   m_CustomRenderQueue: -1
   stringTagMap: {}
   m_SavedProperties:
@@ -18,8 +18,8 @@ Material:
     - first:
         name: _Bump
       second:
-        m_Texture: {fileID: 2800000, guid: 21b8f825b68d72d4f96b739ae85b30ae, type: 3}
-        m_Scale: {x: 5, y: 1}
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - first:
         name: _BumpMap
@@ -30,8 +30,8 @@ Material:
     - first:
         name: _BumpTexture
       second:
-        m_Texture: {fileID: 2800000, guid: 21b8f825b68d72d4f96b739ae85b30ae, type: 3}
-        m_Scale: {x: 300000, y: 3000}
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - first:
         name: _DetailAlbedoMap
@@ -55,31 +55,31 @@ Material:
         name: _EmissionMap
       second:
         m_Texture: {fileID: 0}
-        m_Scale: {x: 10, y: 10}
+        m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - first:
         name: _Foam
       second:
-        m_Texture: {fileID: 2800000, guid: a9578d9d9d3bff24e9728a8c361bd561, type: 3}
-        m_Scale: {x: 80, y: 80}
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - first:
         name: _FoamGradient
       second:
-        m_Texture: {fileID: 2800000, guid: 4372f22e927126049b509d479231f4bd, type: 3}
-        m_Scale: {x: 10, y: 10}
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - first:
         name: _FoamTexture
       second:
-        m_Texture: {fileID: 2800000, guid: a9578d9d9d3bff24e9728a8c361bd561, type: 3}
+        m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - first:
         name: _MainTex
       second:
-        m_Texture: {fileID: 2800000, guid: 4b16effc99a683542b19629f38d72bd4, type: 3}
-        m_Scale: {x: 10, y: 10}
+        m_Texture: {fileID: 2800000, guid: 3629e57882cbc254e86626236930b226, type: 3}
+        m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - first:
         name: _MetallicGlossMap
@@ -102,22 +102,16 @@ Material:
     - first:
         name: _SurfaceTexture
       second:
-        m_Texture: {fileID: 2800000, guid: 60ccb5c1edfd21d459ce52b58204d048, type: 3}
-        m_Scale: {x: 3, y: 3}
-        m_Offset: {x: 0, y: 0}
-    - first:
-        name: _WaterNormal
-      second:
-        m_Texture: {fileID: 2800000, guid: 21b8f825b68d72d4f96b739ae85b30ae, type: 3}
-        m_Scale: {x: 1000, y: 1000}
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     m_Floats:
     - first:
         name: _Append
-      second: 84
+      second: 0
     - first:
         name: _BumpPower
-      second: 0.3
+      second: 0
     - first:
         name: _BumpScale
       second: 1
@@ -126,13 +120,10 @@ Material:
       second: 0.5
     - first:
         name: _Depth
-      second: 0.98
+      second: 0
     - first:
         name: _DepthColorPow
-      second: 0.6
-    - first:
-        name: _DepthDeepPower
-      second: 5.51
+      second: 0
     - first:
         name: _DetailNormalMapScale
       second: 1
@@ -141,28 +132,34 @@ Material:
       second: 0
     - first:
         name: _FoamDepthPower
-      second: 0.15
+      second: 0
     - first:
         name: _FoamPower
-      second: 1.9
+      second: 1
     - first:
         name: _FoamSaturationPower
-      second: 0.48
+      second: 0
     - first:
         name: _FoamSpeed
-      second: 0.4
+      second: 0
     - first:
         name: _FoamStrength
-      second: 0.4
+      second: 8.785265
     - first:
-        name: _FoamTime
-      second: 0
+        name: _GlossMapScale
+      second: 1
     - first:
         name: _Glossiness
-      second: 0
+      second: 0.5
+    - first:
+        name: _GlossyReflections
+      second: 1
     - first:
         name: _HotSpotDistanceBias
       second: 0
+    - first:
+        name: _InvFade
+      second: 3
     - first:
         name: _MaxWaveHeight
       second: 0
@@ -177,10 +174,10 @@ Material:
       second: 1
     - first:
         name: _OpacityIn
-      second: 0.041
+      second: 0
     - first:
         name: _OpacityOut
-      second: 0.407
+      second: 0
     - first:
         name: _Parallax
       second: 0.02
@@ -189,16 +186,19 @@ Material:
       second: 1
     - first:
         name: _ShorePower
-      second: 27.61
+      second: 0
+    - first:
+        name: _SmoothnessTextureChannel
+      second: 0
+    - first:
+        name: _SpecularHighlights
+      second: 1
     - first:
         name: _SrcBlend
       second: 1
     - first:
         name: _UVSec
       second: 0
-    - first:
-        name: _WaterSpeed
-      second: 1
     - first:
         name: _WaveCount
       second: 1
@@ -208,13 +208,19 @@ Material:
     m_Colors:
     - first:
         name: _Color
-      second: {r: 1, g: 0, b: 0.5586209, a: 1}
+      second: {r: 1, g: 1, b: 1, a: 1}
+    - first:
+        name: _EmisColor
+      second: {r: 0.2, g: 0.2, b: 0.2, a: 0}
     - first:
         name: _EmissionColor
       second: {r: 0, g: 0, b: 0, a: 1}
     - first:
         name: _FoamColor
-      second: {r: 1, g: 1, b: 1, a: 1}
+      second: {r: 0.5, g: 0.5, b: 0.5, a: 1}
+    - first:
+        name: _TintColor
+      second: {r: 0.5, g: 0.5, b: 0.5, a: 0.5}
     - first:
         name: _WaterColor
-      second: {r: 0, g: 0.61906683, b: 0.8235294, a: 1}
+      second: {r: 0.5, g: 0.5, b: 0.5, a: 1}

@@ -45,10 +45,8 @@ namespace RaftGame.Wave
 
                     for (int i = 0; i < WorldWaves.Count; i++)
                     {
-                        //var angleDirection = Quaternion.AngleAxis(WorldWaves[i].z, Vector3.up).eulerAngles.normalized;
-                        //WorldWaves[i] += new Vector4(angleDirection.x, angleDirection.y, 0, 0);
-
-                        WorldWaves[i] += new Vector4(0.1f, 0, 0, 0);
+                        var angleDirection = Quaternion.AngleAxis(WorldWaves[i].z, Vector3.up).eulerAngles.normalized;
+                        WorldWaves[i] += new Vector4(angleDirection.x, angleDirection.y, 0, 0);
                     }
                     
                     MaterialPropertyBlock newBlock = new MaterialPropertyBlock();
