@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using RaftGame;
 using UnityEngine;
 using UnityEngine.Events;
+using UnityEngine.SceneManagement;
 
 
 public enum E_GAME_STATE
@@ -19,8 +21,12 @@ namespace RaftGame
 {
     public struct Player
     {
+        [DefaultValue(-1)]
         public int Id;
+
+        [DefaultValue(-1)]
         public int Team;
+
         public GameObject ParentActor;
 
         public Player(int id, int team)
@@ -39,6 +45,7 @@ namespace RaftGame
         //Game HUD
         private int CurrentCanvas = -1; // 0 - pause. 1 - inGame. 2 - postGame.
         private int LastCanvas = 1; // n > 0
+
         private PauseScreenController UI_HUD_PauseGame;
         private GameScreenController UI_HUD_Game;
         private EndGameScreenController UI_HUD_EndGame;
@@ -69,15 +76,14 @@ namespace RaftGame
         public UnityEvent OnResetGame = new UnityEvent();
 
         //Time containers
-        private float GameTime = 0.0f;
-        private float WarmupTime = 0.0f;
+        public float GameTime { get; private set; }
+        public float WarmupTime {get; private set; }
 
         //Score containers
         public int TeamScoreA { get; private set; }
         public int TeamScoreB { get; private set; }
 
-        [HideInInspector]
-        public static List<Player> Players = new List<Player>();
+        private static List<Player> Players = new List<Player>();
 
         public void Awake()
         {
@@ -87,12 +93,14 @@ namespace RaftGame
 
         public void Start()
         {
+            GameTime = 99;
             CurrentGameState = E_GAME_STATE.WAITING;
             StartCoroutine(StartMatch());
         }
 
         public void Update()
         {
+            /*
             if (CurrentGameState == E_GAME_STATE.INROUND)
             {
                 GameTime -= Time.deltaTime;
@@ -100,7 +108,7 @@ namespace RaftGame
                 {
                     StartCoroutine(EndMatch());
                 }
-            }
+            }*/
         }
 
         /// <summary>
@@ -109,30 +117,44 @@ namespace RaftGame
         /// <returns></returns>
         private IEnumerator StartMatch()
         {
-            CurrentGameState = E_GAME_STATE.STARTGAME;
-
             //Swap hud
             SetGameCanvas(1);
 
             //Spawn the ball
             BallInstance =
-                GameObject.Instantiate<GameObject>(Resources.Load<GameObject>("GameBall")).GetComponent<GameBall>();
+                GameObject.Instantiate<GameObject>(
+                    Resources.Load<GameObject>("GameBall")).GetComponent<GameBall>();
 
             BallInstance.RigidBodyComponent.isKinematic = true;
             BallInstance.transform.position = new Vector3(-3.5f, 10, 0);
 
-            //Spawn players
-            //List<Transform> remainingSpawns = PlayerSpawnTransforms.ToList();
-            /*
-            while (remainingSpawns.Count > 0)
+            //Create single player game where the player is on team 0
+            //if we ran this scene only.
+            if (Players == null 
+                || Players.Count == 0)
             {
-
-                yield return null;
+                Players = new List<Player>()
+                {
+                    new Player(0, 0)
+                };
             }
-            */
 
+            //Spawn players
+            if (Players[0].Id >= 0)
+                StartCoroutine(SpawnRaft(TeamASpawns[0], Players[0]));
+
+            if (Players.Count > 1 && Players[1].Id >= 0)
+                StartCoroutine(SpawnRaft(TeamASpawns[1], Players[1]));
+
+            if (Players.Count > 2 && Players[2].Id >= 0)
+                StartCoroutine(SpawnRaft(TeamBSpawns[0], Players[2]));
+
+            if (Players.Count > 3 && Players[3].Id >= 0)
+                StartCoroutine(SpawnRaft(TeamBSpawns[1], Players[3]));
+
+            GameTime = 0;
             WarmupTime = RoundStartDelay;
-
+            CurrentGameState = E_GAME_STATE.STARTGAME;
             OnMatchStart.Invoke();
 
             StartCoroutine(StartRound());
@@ -145,8 +167,6 @@ namespace RaftGame
         /// <returns></returns>
         private IEnumerator StartRound()
         {
-            CurrentGameState = E_GAME_STATE.INROUND;
-
             while (WarmupTime > 0)
             {
                 WarmupTime -= Time.deltaTime;
@@ -156,7 +176,7 @@ namespace RaftGame
             //Init the ball
             BallInstance.RigidBodyComponent.isKinematic = false;
             GameTime = 5.0f;
-
+            CurrentGameState = E_GAME_STATE.INROUND;
             OnRoundStart.Invoke();
             yield return null;
         }
@@ -167,8 +187,8 @@ namespace RaftGame
         /// <returns></returns>
         private IEnumerator EndRound()
         {
-            CurrentGameState = E_GAME_STATE.WAITING;
 
+            CurrentGameState = E_GAME_STATE.WAITING;
             OnRoundEnd.Invoke();
             yield return null;
         }
@@ -179,11 +199,9 @@ namespace RaftGame
         /// <returns></returns>
         private IEnumerator EndMatch()
         {
-            CurrentGameState = E_GAME_STATE.ENDGAME;
-
             //Swap hud
             SetGameCanvas(2);
-
+            CurrentGameState = E_GAME_STATE.ENDGAME;
             OnEndMatch.Invoke();
             yield return null;
         }
@@ -217,48 +235,43 @@ namespace RaftGame
         /// <param name="newCanvas"></param>
         private void SetGameCanvas(int newCanvas)
         {
-            switch (newCanvas)
+            if (newCanvas >= 0)
             {
-                case 0:
-                    if (UI_HUD_PauseGame == null)
-                    {
-                        UI_HUD_PauseGame =
-                            PauseScreenController.Instantiate(
-                                Resources.Load<PauseScreenController>("PauseGameCanvas"));
-                    }
-                    break;
+                if (UI_HUD_PauseGame == null)
+                {
+                    UI_HUD_PauseGame =
+                        PauseScreenController.Instantiate(
+                            Resources.Load<PauseScreenController>("PauseGameCanvas"));
+                }
 
+                if (UI_HUD_Game == null)
+                {
+                    UI_HUD_Game =
+                        GameScreenController.Instantiate(
+                            Resources.Load<GameScreenController>("GameOverlayCanvas"));
+                }
 
+                if (UI_HUD_EndGame == null)
+                {
+                    UI_HUD_EndGame =
+                        EndGameScreenController.Instantiate(
+                            Resources.Load<EndGameScreenController>("EndGameCanvas"));
+                }
 
-                case 1:
-                    if (UI_HUD_Game == null)
-                    {
-                        UI_HUD_Game =
-                            GameScreenController.Instantiate(
-                                Resources.Load<GameScreenController>("GameOverlayCanvas"));
-                    }
-                    break;
+                CurrentCanvas = newCanvas;
 
-
-
-                case 2:
-                    if (UI_HUD_EndGame == null)
-                    {
-                        UI_HUD_EndGame =
-                            EndGameScreenController.Instantiate(
-                                Resources.Load<EndGameScreenController>("EndGameCanvas"));
-                    }
-                    break;
+                //Toggle on/off
+                UI_HUD_PauseGame.gameObject.SetActive(CurrentCanvas == 0);
+                UI_HUD_Game.gameObject.SetActive(CurrentCanvas == 1);
+                UI_HUD_EndGame.gameObject.SetActive(CurrentCanvas == 2);
             }
-
-            CurrentCanvas = newCanvas;
-
-            //Toggle on/off
-            UI_HUD_PauseGame.gameObject.SetActive(CurrentCanvas == 0);
-            UI_HUD_Game.gameObject.SetActive(CurrentCanvas == 1);
-            UI_HUD_EndGame.gameObject.SetActive(CurrentCanvas == 2);
         }
 
+        /// <summary>
+        /// Gives [team] [points].
+        /// </summary>
+        /// <param name="team"></param>
+        /// <param name="points"></param>
         public static void GivePoints(int team, int points)
         {
             if (Instance != null)
@@ -274,6 +287,9 @@ namespace RaftGame
             }
         }
 
+        /// <summary>
+        /// Pauses the game and toggles on/off the pause screen canvas.
+        /// </summary>
         public static void TogglePause()
         {
             Instance.GameIsPaused = !Instance.GameIsPaused;
@@ -286,6 +302,80 @@ namespace RaftGame
             {
                 Instance.SetGameCanvas(Instance.LastCanvas);
             }
+        }
+
+        /// <summary>
+        /// Fully spawns raft for [player] then assigns it to them.
+        /// </summary>
+        /// <param name="spawnPoint"></param>
+        /// <param name="player"></param>
+        /// <returns></returns>
+        private IEnumerator SpawnRaft(Transform spawnPoint, Player player)
+        {
+            //TODO: Play spawn fx
+
+            yield return new WaitForSeconds(1);
+
+            //Spawn raft
+            var newRaft = GameObject.Instantiate(Resources.Load<GameObject>("Raft"));
+            if (newRaft != null)
+            {
+                newRaft.transform.position = spawnPoint.position;
+                newRaft.transform.rotation = spawnPoint.rotation;
+
+                //TODO: Color the raft
+
+                //Assign raft to this player
+                player.ParentActor = newRaft;
+            }
+
+            yield return null;
+        }
+
+        //UI HOOKS
+        public void LeaveToMainMenu()
+        {
+            SceneManager.LoadScene("MainMenu");
+        }
+
+        public void QuitGame()
+        {
+            Application.Quit();
+        }
+
+        public void RestartGame()
+        {
+            SceneManager.LoadScene("Arena");
+        }
+
+        public static void AddPlayerToGame( int team )
+        {
+            if (Players == null)
+            {
+                Players = new List<Player>();
+            }
+
+            Players.Add(new RaftGame.Player(Players.Count, team));
+        }
+
+        public static void RemovePlayerFromGame(int playerId)
+        {
+            if (Players == null)
+            {
+                Debug.LogError("There are no players to remove, be sure to use AddPlayerToGame first.");
+                return;
+            }
+
+            var playerList = Players;
+            for (int i = 0; i < playerList.Count; i++)
+            {
+                if (playerList[i].Id == playerId)
+                {
+                    playerList.RemoveAt(i);
+                }
+            }
+
+            Players = playerList;
         }
     }
 }

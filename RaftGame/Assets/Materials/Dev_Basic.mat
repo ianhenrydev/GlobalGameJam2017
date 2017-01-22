@@ -126,7 +126,7 @@ Material:
       second: 0.5
     - first:
         name: _Depth
-      second: 2.35
+      second: 2.32
     - first:
         name: _DepthColorPow
       second: 0.68

@@ -35,7 +35,7 @@ public class PlayerSelectPanelController : MonoBehaviour
             {
                 promptText.SetActive(false);
                 joinedLayout.SetActive(true);
-                RaftGame.GameManager.Players.Add(player);
+                //RaftGame.GameManager.Players.Add(player);
                 playerJoined = !playerJoined;
             }
         }
@@ -45,7 +45,7 @@ public class PlayerSelectPanelController : MonoBehaviour
             {
                 promptText.SetActive(true);
                 joinedLayout.SetActive(false);
-                RaftGame.GameManager.Players.Remove(player);
+                //RaftGame.GameManager.Players.Remove(player);
                 playerJoined = !playerJoined;
             }
         }
@@ -65,7 +65,7 @@ public class PlayerSelectPanelController : MonoBehaviour
 
     private void switchTeam()
     {
-        RaftGame.GameManager.Players.Remove(player);
+        //RaftGame.GameManager.Players.Remove(player);
         if (player.Team == 1)
         {
             player.Team = 2;
@@ -75,6 +75,6 @@ public class PlayerSelectPanelController : MonoBehaviour
             player.Team = 1;
         }
         teamText.text = "Team " + player.Team.ToString();
-        RaftGame.GameManager.Players.Add(player);
+        //RaftGame.GameManager.Players.Add(player);
     }
 }

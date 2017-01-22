@@ -26,6 +26,7 @@ namespace RaftGame
                 int team1count = 0;
                 int team2count = 0;
 
+                /*
                 if (RaftGame.GameManager.Players.Count > 0)
                 {
                     SceneManager.LoadScene("Arena");
@@ -36,7 +37,7 @@ namespace RaftGame
                     return;
                 }
 
-                //vvvvvv THIS WILL NEVER BE CALLED!!!! vvvvvvvv FIX THIS!!!!
+                //vvvvvv THIS WILL NEVER BE CALLED!!!! vvvvvvvv
                 foreach (Player player in RaftGame.GameManager.Players)
                 {
                     if (player.Team == 1)
@@ -58,6 +59,7 @@ namespace RaftGame
                 {
                     Debug.Log("Empty team");
                 }
+                */
             }
         }
 

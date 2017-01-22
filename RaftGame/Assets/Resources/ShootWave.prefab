@@ -342,8 +342,8 @@ MonoBehaviour:
   - {fileID: 198209126690783330}
   - {fileID: 198536080838147204}
   - {fileID: 198993417155974126}
-  BallHitPower: 16
-  PlayerHitPower: 3
+  BallHitPower: 60
+  PlayerHitPower: 20
 --- !u!135 &135229825930798854
 SphereCollider:
   m_ObjectHideFlags: 1
