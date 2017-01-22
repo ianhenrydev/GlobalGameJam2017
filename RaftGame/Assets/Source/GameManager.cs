@@ -83,7 +83,7 @@ namespace RaftGame
         public int TeamScoreA { get; private set; }
         public int TeamScoreB { get; private set; }
 
-        private static List<Player> Players = new List<Player>();
+        public static List<Player> Players { get; private set; }
 
         public void Awake()
         {
@@ -100,7 +100,6 @@ namespace RaftGame
 
         public void Update()
         {
-            /*
             if (CurrentGameState == E_GAME_STATE.INROUND)
             {
                 GameTime -= Time.deltaTime;
@@ -108,7 +107,7 @@ namespace RaftGame
                 {
                     StartCoroutine(EndMatch());
                 }
-            }*/
+            }
         }
 
         /// <summary>
@@ -203,6 +202,8 @@ namespace RaftGame
             SetGameCanvas(2);
             CurrentGameState = E_GAME_STATE.ENDGAME;
             OnEndMatch.Invoke();
+
+            print("SCORE: " + TeamScoreA + " to " + TeamScoreB);
             yield return null;
         }
 
@@ -297,10 +298,13 @@ namespace RaftGame
             {
                 Instance.LastCanvas = Instance.CurrentCanvas;
                 Instance.SetGameCanvas(0);
+
+                Time.timeScale = 0;
             }
             else
             {
                 Instance.SetGameCanvas(Instance.LastCanvas);
+                Time.timeScale = 1;
             }
         }
 
