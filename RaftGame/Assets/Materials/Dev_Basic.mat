@@ -126,10 +126,10 @@ Material:
       second: 0.5
     - first:
         name: _Depth
-      second: 0.98
+      second: 2.35
     - first:
         name: _DepthColorPow
-      second: 0.6
+      second: 0.68
     - first:
         name: _DepthDeepPower
       second: 5.51
@@ -162,10 +162,10 @@ Material:
       second: 0
     - first:
         name: _HotSpotDistanceBias
-      second: 0
+      second: 0.6
     - first:
         name: _MaxWaveHeight
-      second: 0
+      second: 10
     - first:
         name: _Metallic
       second: 0

@@ -22,8 +22,8 @@ namespace RaftGame {
 		}
 
 		public void SetPlayer(Player data) {
-			m_Id = data.id;
-			m_Team = data.team;
+			m_Id = data.Id;
+			m_Team = data.Team;
 		}
 
 		public void Reset() {

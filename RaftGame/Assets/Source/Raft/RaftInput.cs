@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System;
 using System.Collections.Generic;
+using RaftGame;
 using UnityEngine;
 
 public class RaftInput : MonoBehaviour
@@ -17,8 +18,11 @@ public class RaftInput : MonoBehaviour
     {
         get
         {
-            if (OwnerId == -1)
+            if (OwnerId == -1
+                || RaftGame.GameManager.Instance == null
+                 || RaftGame.GameManager.Instance.CurrentGameState != E_GAME_STATE.INROUND)
                 return Vector3.zero;
+
 
             return new Vector3(
                 Input.GetAxis(SteerAxis),
@@ -31,7 +35,9 @@ public class RaftInput : MonoBehaviour
     {
         get
         {
-            if (OwnerId == -1)
+            if (OwnerId == -1
+                || RaftGame.GameManager.Instance == null
+                 || RaftGame.GameManager.Instance.CurrentGameState != E_GAME_STATE.INROUND)
                 return 0;
 
 			// Clamp the thrust value between [0,1]
@@ -43,7 +49,9 @@ public class RaftInput : MonoBehaviour
     {
         get
         {
-            if (OwnerId == -1)
+            if (OwnerId == -1
+                || RaftGame.GameManager.Instance == null
+                 || RaftGame.GameManager.Instance.CurrentGameState != E_GAME_STATE.INROUND)
                 return false;
 
             return Input.GetButton(BoostButton);
@@ -51,15 +59,17 @@ public class RaftInput : MonoBehaviour
     }
 		
 	// This should be changed into an axis.
-	public bool IsFiring {
+	public bool IsFiring
+    {
 		get {
-			// This check is stupid
+            // This check is stupid
             //it's scalable!
-			if (OwnerId == -1) {
-				return false;
-			}
-				
-			return Input.GetButton (FireButton);
+            if (OwnerId == -1
+                || RaftGame.GameManager.Instance == null
+                 || RaftGame.GameManager.Instance.CurrentGameState != E_GAME_STATE.INROUND)
+                return false;
+
+            return Input.GetButton (FireButton);
 		}
 	}
 
@@ -70,6 +80,10 @@ public class RaftInput : MonoBehaviour
 
     public void Update()
     {
+        if (Input.GetButtonDown("Pause"))
+        {
+            GameManager.TogglePause();
+        }
     }
 
     public void SetOwner(int newId)
