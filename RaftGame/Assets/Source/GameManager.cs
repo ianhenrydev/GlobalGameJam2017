@@ -30,12 +30,9 @@ namespace RaftGame
         [DefaultValue(-1)]
         public int Team;
 
-        public GameObject ParentActor;
-
         public Player(int id, int team)
         {
             Id = id;
-            ParentActor = null;
             Team = team;
         }
     }
@@ -53,6 +50,8 @@ namespace RaftGame
         private PauseScreenController UI_HUD_PauseGame;
         private GameScreenController UI_HUD_Game;
         private EndGameScreenController UI_HUD_EndGame;
+
+        private List<GameObject> PlayerRafts = new List<GameObject>();
         #endregion
 
         #region Static Members
@@ -61,7 +60,6 @@ namespace RaftGame
         #endregion
 
         #region Public Members
-
         //Game state
         public E_GAME_STATE CurrentGameState { get; private set; }
         public bool GameIsPaused { get; private set; }
@@ -128,16 +126,6 @@ namespace RaftGame
             //Swap hud
             SetGameCanvas(1);
 
-            //Spawn the ball
-            BallInstance =
-                GameObject.Instantiate<GameObject>(
-                    Resources.Load<GameObject>("GameBall")).GetComponent<GameBall>();
-
-            BallInstance.OnBallDeath += OnBallDeath;
-
-            BallInstance.RigidBodyComponent.isKinematic = true;
-            BallInstance.transform.position = new Vector3(-3.5f, 10, 0);
-
             //Create single player game where the player is on team 0
             //if we ran this scene only.
             if (Players == null 
@@ -149,7 +137,18 @@ namespace RaftGame
                 };
             }
 
-            //Spawn players
+            HandlePlayerSpawn();
+
+            GameTime = TimeForCompleteMatch;
+            CurrentGameState = E_GAME_STATE.STARTGAME;
+            OnMatchStart.Invoke();
+
+            StartCoroutine(StartRound());
+            yield return null;
+        }
+
+        private void HandlePlayerSpawn()
+        {
             if (Players[0].Id >= 0)
                 StartCoroutine(SpawnRaft(TeamASpawns[0], Players[0]));
 
@@ -161,13 +160,6 @@ namespace RaftGame
 
             if (Players.Count > 3 && Players[3].Id >= 0)
                 StartCoroutine(SpawnRaft(TeamBSpawns[1], Players[3]));
-
-            GameTime = TimeForCompleteMatch;
-            CurrentGameState = E_GAME_STATE.STARTGAME;
-            OnMatchStart.Invoke();
-
-            StartCoroutine(StartRound());
-            yield return null;
         }
 
         /// <summary>
@@ -176,6 +168,18 @@ namespace RaftGame
         /// <returns></returns>
         private IEnumerator StartRound()
         {
+            CurrentGameState = E_GAME_STATE.WAITING;
+
+            //Spawn the ball
+            BallInstance =
+                GameObject.Instantiate<GameObject>(
+                    Resources.Load<GameObject>("GameBall")).GetComponent<GameBall>();
+
+            BallInstance.OnBallDeath += OnBallDeath;
+
+            BallInstance.RigidBodyComponent.isKinematic = true;
+            BallInstance.transform.position = new Vector3(-3.5f, 10, 0);
+
             //Start countdown
             WarmupTime = TimeForRoundStart;
             while (WarmupTime > 0)
@@ -184,7 +188,6 @@ namespace RaftGame
                 yield return null;
             }
 
-            //Init the ball
             BallInstance.RigidBodyComponent.isKinematic = false;
             CurrentGameState = E_GAME_STATE.INROUND;
             OnRoundStart.Invoke();
@@ -198,6 +201,8 @@ namespace RaftGame
         /// <returns></returns>
         private IEnumerator EndRound()
         {
+            OnRoundEnd.Invoke();
+
             var goalTimer = 4.0f;
 
             while (goalTimer > 0.0f)
@@ -208,9 +213,11 @@ namespace RaftGame
             }
 
             Time.timeScale = 1.0f;
+            
+            //Reset round
+            ResetTemporaryObjects();
 
-            CurrentGameState = E_GAME_STATE.WAITING;
-            OnRoundEnd.Invoke();
+            StartCoroutine(StartRound());
             yield return null;
         }
 
@@ -233,10 +240,16 @@ namespace RaftGame
         /// Reset Ball and players
         /// </summary>
         /// <returns></returns>
-        private IEnumerator ResetTemporaryObjects()
+        private void ResetTemporaryObjects()
         {
+            for (int i = 0; i < PlayerRafts.Count; i++)
+            {
+                GameObject.Destroy(PlayerRafts[i]);
+            }
+
+            HandlePlayerSpawn();
+
             OnResetTempObjects.Invoke();
-            yield return null;
         }
 
         /// <summary>
@@ -312,7 +325,7 @@ namespace RaftGame
                 //TODO: Color the raft
 
                 //Assign raft to this player
-                player.ParentActor = newRaft;
+                PlayerRafts.Add(newRaft);
             }
 
             yield return null;
