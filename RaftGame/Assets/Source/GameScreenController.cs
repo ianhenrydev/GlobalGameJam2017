@@ -7,6 +7,7 @@ public class GameScreenController : MonoBehaviour {
 
 	public Text team1text;
 	public Text team2text;
+	public Text countdownText;
 	// Use this for initialization
 	void Start () {
 		
@@ -20,5 +21,12 @@ public class GameScreenController : MonoBehaviour {
 	public void updateTeamScore(int team1, int team2) {
 		team2text.text = team1.ToString ();
 		team1text.text = team2.ToString ();
+	}
+
+	public void updateCountdownText(int time) {
+		if (time <= 0)
+			countdownText.text = "";
+		else
+			countdownText.text = time.ToString();
 	}
 }

@@ -185,6 +185,7 @@ namespace RaftGame
             while (WarmupTime > 0)
             {
                 WarmupTime -= Time.deltaTime;
+				UI_HUD_Game.updateCountdownText ((int)Math.Ceiling(WarmupTime));
                 yield return null;
             }
 
