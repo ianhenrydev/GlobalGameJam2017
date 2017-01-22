@@ -348,6 +348,7 @@ namespace RaftGame
                 {
                     Instance.TeamScoreB += points;
                 }
+				Instance.UI_HUD_Game.updateTeamScore (Instance.TeamScoreA, Instance.TeamScoreB);
             }
         }
 

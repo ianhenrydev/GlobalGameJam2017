@@ -144,9 +144,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: 'Team 1 Wins!
-
-    Press enter/start to return to menu'
+  m_Text: 
 --- !u!114 &114863587004124612
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -174,6 +172,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a754a074e6d03c842b8b3e242a58c6db, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  winText: {fileID: 114860476519556366}
 --- !u!222 &222207911281809906
 CanvasRenderer:
   m_ObjectHideFlags: 1

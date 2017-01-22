@@ -6,7 +6,7 @@ using UnityEngine.UI;
 public class EndGameScreenController : MonoBehaviour {
 
 	public Text winText;
-	// Use this for initialization
+
 	void Start () {
 		
 	}
@@ -27,5 +27,6 @@ public class EndGameScreenController : MonoBehaviour {
 			endText = "Tie game!\nEveryone wins (or loses)\n";
 		}
 		endText += "Press start/enter to return to menu";
+		winText.text = endText;
 	}
 }
