@@ -1,7 +1,9 @@
 ﻿using System.Collections;
 using System;
 using System.Collections.Generic;
+using RaftGame;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class RaftInput : MonoBehaviour
 {
@@ -10,6 +12,10 @@ public class RaftInput : MonoBehaviour
 	private string ThrustAxis;
 	private string BoostButton;
 	private string SteerAxis;
+
+    public Image KaratImg;
+    public Text PlayerNameText;
+
 	// private string Boost
 
 	// Return left right values
@@ -17,8 +23,11 @@ public class RaftInput : MonoBehaviour
     {
         get
         {
-            if (OwnerId == -1)
+            if (OwnerId == -1
+                || RaftGame.GameManager.Instance == null
+                 || RaftGame.GameManager.Instance.CurrentGameState != E_GAME_STATE.INROUND)
                 return Vector3.zero;
+
 
             return new Vector3(
                 Input.GetAxis(SteerAxis),
@@ -31,7 +40,9 @@ public class RaftInput : MonoBehaviour
     {
         get
         {
-            if (OwnerId == -1)
+            if (OwnerId == -1
+                || RaftGame.GameManager.Instance == null
+                 || RaftGame.GameManager.Instance.CurrentGameState != E_GAME_STATE.INROUND)
                 return 0;
 
 			// Clamp the thrust value between [0,1]
@@ -43,7 +54,9 @@ public class RaftInput : MonoBehaviour
     {
         get
         {
-            if (OwnerId == -1)
+            if (OwnerId == -1
+                || RaftGame.GameManager.Instance == null
+                 || RaftGame.GameManager.Instance.CurrentGameState != E_GAME_STATE.INROUND)
                 return false;
 
             return Input.GetButton(BoostButton);
@@ -51,25 +64,30 @@ public class RaftInput : MonoBehaviour
     }
 		
 	// This should be changed into an axis.
-	public bool IsFiring {
+	public bool IsFiring
+    {
 		get {
-			// This check is stupid
+            // This check is stupid
             //it's scalable!
-			if (OwnerId == -1) {
-				return false;
-			}
-				
-			return Input.GetButton (FireButton);
+            if (OwnerId == -1
+                || RaftGame.GameManager.Instance == null
+                 || RaftGame.GameManager.Instance.CurrentGameState != E_GAME_STATE.INROUND)
+                return false;
+
+            return Input.GetButton (FireButton);
 		}
 	}
 
     public void Awake()
     {
-		SetOwner (-1);
     }
 
     public void Update()
     {
+        if (Input.GetButtonDown("Pause"))
+        {
+            GameManager.TogglePause();
+        }
     }
 
     public void SetOwner(int newId)
@@ -79,7 +97,11 @@ public class RaftInput : MonoBehaviour
 			newId = -1;
 		}
 
-		FireButton = "Fire" + newId;
+        KaratImg.color = GameManager.IdToColor(newId);
+        PlayerNameText.color = GameManager.IdToColor(newId);
+        PlayerNameText.text = "Player" + (newId + 1).ToString();
+
+        FireButton = "Fire" + newId;
 		ThrustAxis = "Thrust" + newId;
 		BoostButton = "Boost" + newId;
 		SteerAxis = "Steer" + newId;

@@ -3,52 +3,58 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-namespace RaftGame {
-	
-	public class MainMenuController : MonoBehaviour {
+namespace RaftGame
+{
 
-		public GameObject mainCanvas;
-		public GameObject playerSelectCanvas;
+    public class MainMenuController : MonoBehaviour
+    {
 
-		// Use this for initialization
-		void Start () {
-			
-		}
-		
-		// Update is called once per frame
-		void Update () {
-			if (Input.GetButtonDown("Start")) {
-				int team1count = 0;
-				int team2count = 0;
+        public GameObject mainCanvas;
+        public GameObject playerSelectCanvas;
 
-				if (RaftGame.GameManager.players.Count > 0) {
-					SceneManager.LoadScene ("Arena");
-					return;
-				} else {
-					return;
-				}
+        // Use this for initialization
+        void Start()
+        {
 
-				foreach (Player player in RaftGame.GameManager.players) {
-					if (player.team == 1) {
-						team1count++;
-					} else {
-						team2count++;
-					}
-				}
+        }
 
-				// If both teams have at least one player then load the game round
-				if (team1count > 0 && team2count > 0) {
-					SceneManager.LoadScene ("GameScene");
-				} else {
-					Debug.Log ("Empty team");
-				}
-			}
-		}
+        // Update is called once per frame
+        void Update()
+        {
+            if (Input.GetButtonDown("Start"))
+            {
+                int team1count = 0;
+                int team2count = 0;
 
-		public void PlayOnClick(){
-			mainCanvas.SetActive (false);
-			playerSelectCanvas.SetActive (true);
-		}
-	}
+                foreach (Player player in GameManager.Players)
+                {
+                    if (player.Team == 1)
+                    {
+                        team1count++;
+                    }
+                    else
+                    {
+                        team2count++;
+                    }
+                }
 
-} // end of namespace
+                // If both teams have at least one player then load the game round
+                if (team1count > 0 && team2count > 0)
+                {
+                    SceneManager.LoadScene("Arena");
+                }
+                else
+                {
+                    Debug.Log("Empty team");
+                }
+            }
+        }
+
+        public void PlayOnClick()
+        {
+            mainCanvas.SetActive(false);
+            playerSelectCanvas.SetActive(true);
+        }
+    }
+
+}

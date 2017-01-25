@@ -1,136 +1,464 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.ComponentModel;
+using System.Linq;
 using RaftGame;
 using UnityEngine;
+using UnityEngine.Events;
+using UnityEngine.SceneManagement;
 
-namespace RaftGame {
-		
-	public struct Player {
-		private int idVal, teamVal;
-		private Color _color;
+public enum E_GAME_STATE
+{
+    STARTGAME,
+    WAITING,
+    INROUND,
+    ENDGAME
+}
 
-		public Color color {
-			get {
-				return _color;
-			}
-			set {
-				_color = value;
-			}
-		}
+namespace RaftGame
+{
+    /// <summary>
+    /// The struct for every player in the game.
+    /// Should not be instanced directly.
+    /// </summary>
+    public struct Player
+    {
+        [DefaultValue(-1)]
+        public int Id;
 
-		public int id {
-			get {
-				return idVal;
-			}
-			set {
-				idVal = value;
-			}
-		}
-		public int team {
-			get {
-				return teamVal;
-			}
-			set {
-				teamVal = value;
-			}
-		}
-	}
+        [DefaultValue(-1)]
+        public int Team;
 
-	public class GameManager : MonoBehaviour  {
+        public Player(int id, int team)
+        {
+            Id = id;
+            Team = team;
+        }
+    }
 
-		public GameObject m_RaftPrefab;				// Prefab of raft to spawn for players
-		public GameObject m_BallPrefab;				// Prefab of game ball
+    public class GameManager : MonoBehaviour
+    {
+        #region Private Members
+        //Important Component Instances
+        private GameBall BallInstance;
 
-		public float RoundStartDelay = 3.0f;		// Round start and end delays to show ui
-		public float RoundEndDelay = 3.0f;
+        //Game HUD
+        private int CurrentCanvas = -1; // 0 - pause. 1 - inGame. 2 - postGame.
+        private int LastCanvas = 1; // n > 0
 
-		// Global List of Player Initialization data
-		// Modified by main menu controller
-		[HideInInspector] public static List<Player> players = new List<Player>();
+        private PauseScreenController UI_HUD_PauseGame;
+        private GameScreenController UI_HUD_Game;
+        private EndGameScreenController UI_HUD_EndGame;
 
-		private List<RaftManager> m_Rafts;			// Raft manager for each player
-		private GameObject m_BallInstance;			// Instance of round ball
+        private List<GameObject> PlayerRafts = new List<GameObject>();
+        #endregion
 
-		private WaitForSeconds StartWait;			// Timers for delaying coroutines
-		private WaitForSeconds EndWait;
+        #region Static Members
+        public static GameManager Instance;
+        public static List<Player> Players { get; private set; }
+        #endregion
 
-		void Awake() {
-			m_Rafts = new List<RaftManager> ();
-		}
+        #region Public Members
+        //Game state
+        public E_GAME_STATE CurrentGameState { get; private set; }
+        public bool GameIsPaused { get; private set; }
+        public bool MatchCompleted { get; private set; }
 
-		// Use this for initialization
-		void Start () {
-			SpawnRafts ();
+        //Object prefabs
+        public GameObject m_RaftPrefab;
+        public GameObject m_BallPrefab;
 
-			StartWait = new WaitForSeconds (RoundStartDelay);
-			EndWait = new WaitForSeconds (RoundEndDelay);
+        public Transform[] TeamASpawns;
+        public Transform[] TeamBSpawns;
 
-			StartCoroutine (GameLoop ());
-		}
-		
-		// Update is called once per frame
-		void Update () {
-			
-		}
+        //Round start/end info
+        public float TimeForRoundStart = 3.0f;
+        public float TimeForCompleteMatch = 160.0f;
 
-		private IEnumerator GameLoop() {
-			yield return StartCoroutine (RoundStarting ());
+        //Audio componentes
+        public AudioSource OnGoalSFX;
+        public AudioSource OnBallExplodeSFX;
 
-			yield return StartCoroutine (RoundPlaying ());
+        //Events
+        public UnityEvent OnMatchStart = new UnityEvent();
+        public UnityEvent OnRoundStart = new UnityEvent();
+        public UnityEvent OnRoundEnd = new UnityEvent();
+        public UnityEvent OnEndMatch = new UnityEvent();
+        public UnityEvent OnResetTempObjects = new UnityEvent();
+        public UnityEvent OnResetGame = new UnityEvent();
 
-			yield return StartCoroutine (RoundEnding ());
-		}
+        //Time containers
+        public float GameTime { get; private set; }
+        public float WarmupTime { get; private set; }
 
-		private IEnumerator RoundStarting() {
-			print ("Round starting");
+        //Score containers
+        public int TeamScoreA { get; private set; }
+        public int TeamScoreB { get; private set; }
+        #endregion
 
-			SpawnBall ();
+        private void Awake()
+        {
+            Instance = this;
+            CurrentGameState = E_GAME_STATE.WAITING;
+        }
 
-			yield return StartWait;
-		}
+        private void Start()
+        {
+            GameTime = 99;
+            CurrentGameState = E_GAME_STATE.WAITING;
+            StartCoroutine(StartMatch());
+        }
 
-		private IEnumerator RoundPlaying() {
-			print ("round playing");
+        private void Update()
+        {
+            if (CurrentGameState == E_GAME_STATE.INROUND)
+            {
+                GameTime -= Time.deltaTime;
+				UI_HUD_Game.updateTime ((int)GameTime);
+                if (GameTime <= 0.0f)
+                {
+                    StartCoroutine(EndMatch());
+                }
+            }
+        }
 
-			// Move onto next frame
-			yield return null;
-		}
+        /// <summary>
+        /// Spawn players and set countdown time
+        /// </summary>
+        /// <returns></returns>
+        private IEnumerator StartMatch()
+        {
+            //Swap hud
+            SetGameCanvas(1);
 
-		private IEnumerator RoundEnding() {
-			yield return EndWait;
-		}
+            //Create single player game where the player is on team 0
+            //if we ran this scene only.
+            if (Players == null 
+                || Players.Count == 0)
+            {
+                Players = new List<Player>()
+                {
+                    new Player(0, 0)
+                };
+            }
 
-		void ResetRafts() {
-			foreach (RaftManager manager in m_Rafts) {
-				manager.Reset ();
-			}	
-		}
+            HandlePlayerSpawn();
 
-		private void SpawnBall() {
-			Debug.Log ("Spawning ball");
+            GameTime = TimeForCompleteMatch;
+            CurrentGameState = E_GAME_STATE.STARTGAME;
+            OnMatchStart.Invoke();
 
-			GameObject ball_spawn = GameObject.FindGameObjectWithTag ("Ball Spawn");
-			if (ball_spawn) {
-				// Transform incorrect
-				m_BallInstance = Instantiate(m_BallPrefab, ball_spawn.transform);
-			}
-		}
+            StartCoroutine(StartRound());
+            yield return null;
+        }
 
-		void SpawnRafts() {		
-			Debug.Log ("Spawning rafts");
-			var player_spawns = new Stack<GameObject>(GameObject.FindGameObjectsWithTag ("Player Spawn"));
+        private void HandlePlayerSpawn()
+        {
+            if (Players[0].Id >= 0)
+                StartCoroutine(SpawnRaft(TeamASpawns[0], Players[0]));
 
-			foreach (Player player in players) {
-				Debug.Log ("Spawning player " + player.id);
-				Transform spawn_transform = player_spawns.Pop ().transform;
+            if (Players.Count > 1 && Players[1].Id >= 0)
+                StartCoroutine(SpawnRaft(TeamASpawns[1], Players[1]));
 
-				RaftManager raft = new RaftManager();
-				raft.m_Instance = Instantiate (m_RaftPrefab, spawn_transform);
-				raft.Setup ();
-				raft.SetPlayer(player);
+            if (Players.Count > 2 && Players[2].Id >= 0)
+                StartCoroutine(SpawnRaft(TeamBSpawns[0], Players[2]));
 
-				m_Rafts.Add (raft);
-			}
-		}
-	}
-} // end of namespace
+            if (Players.Count > 3 && Players[3].Id >= 0)
+                StartCoroutine(SpawnRaft(TeamBSpawns[1], Players[3]));
+        }
+
+        /// <summary>
+        /// Set countdown and do countdown, go InRound afterwards
+        /// </summary>
+        /// <returns></returns>
+        private IEnumerator StartRound()
+        {
+            CurrentGameState = E_GAME_STATE.WAITING;
+
+            //Spawn the ball
+            BallInstance =
+                GameObject.Instantiate<GameObject>(
+                    Resources.Load<GameObject>("GameBall")).GetComponent<GameBall>();
+
+            BallInstance.OnBallDeath += OnBallDeath;
+
+            BallInstance.RigidBodyComponent.isKinematic = true;
+            BallInstance.transform.position = new Vector3(-3.5f, 10, 0);
+
+            //Start countdown
+            WarmupTime = TimeForRoundStart;
+            while (WarmupTime > 0)
+            {
+                WarmupTime -= Time.deltaTime;
+				UI_HUD_Game.updateCountdownText ((int)Math.Ceiling(WarmupTime));
+                yield return null;
+            }
+
+            BallInstance.RigidBodyComponent.isKinematic = false;
+            CurrentGameState = E_GAME_STATE.INROUND;
+            OnRoundStart.Invoke();
+            yield return null;
+        }
+
+        /// <summary>
+        /// End the round and stop timers.
+        /// Plays OnGoal
+        /// </summary>
+        /// <returns></returns>
+        private IEnumerator EndRound()
+        {
+            OnRoundEnd.Invoke();
+
+            var goalTimer = 4.0f;
+
+            while (goalTimer > 0.0f)
+            {
+                goalTimer -= Time.deltaTime;
+                Time.timeScale = 0.6f;
+                yield return null;
+            }
+
+            if(GameIsPaused)
+
+            Time.timeScale = 1.0f;
+            
+            //Reset round
+            ResetTemporaryObjects();
+
+            StartCoroutine(StartRound());
+            yield return null;
+        }
+
+        /// <summary>
+        /// Destroy ball and show scoreboard
+        /// </summary>
+        /// <returns></returns>
+        private IEnumerator EndMatch()
+        {
+            //Swap hud
+            SetGameCanvas(2);
+            CurrentGameState = E_GAME_STATE.ENDGAME;
+            MatchCompleted = true;
+            OnEndMatch.Invoke();
+
+			UI_HUD_EndGame.printScore (TeamScoreA, TeamScoreB);
+            print("SCORE: " + TeamScoreA + " to " + TeamScoreB);
+            yield return null;
+        }
+
+        /// <summary>
+        /// Reset Ball and players
+        /// </summary>
+        /// <returns></returns>
+        private void ResetTemporaryObjects()
+        {
+            for (int i = 0; i < PlayerRafts.Count; i++)
+            {
+                GameObject.Destroy(PlayerRafts[i]);
+            }
+
+            HandlePlayerSpawn();
+
+            OnResetTempObjects.Invoke();
+        }
+
+        /// <summary>
+        /// Reset Score
+        /// </summary>
+        /// <returns></returns>
+        private IEnumerator ResetGame()
+        {
+            MatchCompleted = false;
+            TeamScoreA = 0;
+            TeamScoreB = 0;
+
+            OnResetGame.Invoke();
+            yield return null;
+        }
+
+        /// <summary>
+        /// Swaps out the game canvases.
+        /// </summary>
+        /// <param name="newCanvas"></param>
+        private void SetGameCanvas(int newCanvas)
+        {
+            if (newCanvas >= 0)
+            {
+                if (UI_HUD_PauseGame == null)
+                {
+                    UI_HUD_PauseGame =
+                        PauseScreenController.Instantiate(
+                            Resources.Load<PauseScreenController>("PauseGameCanvas"));
+                }
+
+                if (UI_HUD_Game == null)
+                {
+                    UI_HUD_Game =
+                        GameScreenController.Instantiate(
+                            Resources.Load<GameScreenController>("GameOverlayCanvas"));
+                }
+
+                if (UI_HUD_EndGame == null)
+                {
+                    UI_HUD_EndGame =
+                        EndGameScreenController.Instantiate(
+                            Resources.Load<EndGameScreenController>("EndGameCanvas"));
+                }
+
+                CurrentCanvas = newCanvas;
+
+                //Toggle on/off
+                UI_HUD_PauseGame.gameObject.SetActive(CurrentCanvas == 0);
+                UI_HUD_Game.gameObject.SetActive(CurrentCanvas == 1);
+                UI_HUD_EndGame.gameObject.SetActive(CurrentCanvas == 2);
+            }
+        }
+
+        /// <summary>
+        /// Fully spawns raft for [player] then assigns it to them.
+        /// </summary>
+        /// <param name="spawnPoint"></param>
+        /// <param name="player"></param>
+        /// <returns></returns>
+        private IEnumerator SpawnRaft(Transform spawnPoint, Player player)
+        {
+            //TODO: Play spawn fx
+
+            yield return new WaitForSeconds(1);
+
+            //Spawn raft
+            var newRaft = GameObject.Instantiate(Resources.Load<GameObject>("Raft"));
+            if (newRaft != null)
+            {
+                newRaft.GetComponent<RaftInput>().SetOwner(player.Id);
+                newRaft.transform.position = spawnPoint.position;
+                newRaft.transform.rotation = spawnPoint.rotation;
+
+                //TODO: Color the raft
+
+                //Assign raft to this player
+                PlayerRafts.Add(newRaft);
+            }
+
+            yield return null;
+        }
+
+        /// <summary>
+        /// Called when the ball has been scored on [team].
+        /// </summary>
+        private void OnBallDeath(int team)
+        {
+            if (team != -1)
+            {
+                if (OnBallExplodeSFX != null)
+                {
+                    OnBallExplodeSFX.Play();
+                }
+
+                StartCoroutine(EndRound());
+                BallInstance = null;
+            }
+        }
+
+        /// <summary>
+        /// Gives [team] [points].
+        /// </summary>
+        /// <param name="team"></param>
+        /// <param name="points"></param>
+        public static void GivePoints(int team, int points)
+        {
+            if (Instance != null)
+            {
+                if (team == 0)
+                {
+                    Instance.TeamScoreA += points;
+                }
+                else
+                {
+                    Instance.TeamScoreB += points;
+                }
+				Instance.UI_HUD_Game.updateTeamScore (Instance.TeamScoreA, Instance.TeamScoreB);
+            }
+        }
+
+        /// <summary>
+        /// Pauses the game and toggles on/off the pause screen canvas.
+        /// </summary>
+        public static void TogglePause()
+        {
+            Instance.GameIsPaused = !Instance.GameIsPaused;
+            if (Instance.GameIsPaused)
+            {
+                Instance.LastCanvas = Instance.CurrentCanvas;
+                Instance.SetGameCanvas(0);
+
+                Time.timeScale = 0;
+            }
+            else
+            {
+                Instance.SetGameCanvas(Instance.LastCanvas);
+                Time.timeScale = 1;
+            }
+        }
+
+        public static void AddPlayerToGame(int team)
+        {
+            if (Players == null)
+            {
+                Players = new List<Player>();
+            }
+
+            Players.Add(new RaftGame.Player(Players.Count - 1, team));
+        }
+
+        public static void RemovePlayerFromGame(int playerId)
+        {
+            if (Players == null)
+            {
+                Debug.LogError("There are no players to remove, be sure to use AddPlayerToGame first.");
+                return;
+            }
+
+            var playerList = Players;
+            for (int i = 0; i < playerList.Count; i++)
+            {
+                if (playerList[i].Id == playerId)
+                {
+                    playerList.RemoveAt(i);
+                }
+            }
+
+            Players = playerList;
+        }
+
+        public void LeaveToMainMenu()
+        {
+            SceneManager.LoadScene("MainMenu");
+        }
+
+        public void QuitGame()
+        {
+            Application.Quit();
+        }
+
+        public void RestartGame()
+        {
+            SceneManager.LoadScene("Arena");
+        }
+
+        public static Color IdToColor(int id)
+        {
+            if (id == 0)
+                return Color.blue;
+            if (id == 1)
+                return Color.cyan;
+            if (id == 2)
+                return Color.red;
+            if (id == 3)
+                return Color.magenta * 0.5f;
+
+            return Color.white;
+        }
+    }
+}
